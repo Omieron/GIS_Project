@@ -1,0 +1,1 @@
+export const circleRegistry = new Map();
