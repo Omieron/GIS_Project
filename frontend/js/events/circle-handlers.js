@@ -1,6 +1,6 @@
 import { createDraggableCircle } from '../map/circle.js';
 import { circleRegistry } from '../map/circleRegistry.js';
-import { showInfoCard } from '../UI/leftTabMenu.js';
+import { showInfoCard  } from '../UI/leftTabMenu.js';
 
 export function bindUIEvents(map) {
   document.getElementById('btn-foursquare')?.addEventListener('click', () => {
@@ -34,7 +34,6 @@ export function bindUIEvents(map) {
 
       // overpass tabını aktif et
       showInfoCard('overpass-tab', 'Overpass');
-
     } else {
       console.log('⚠️ Overpass çemberi zaten var');
     }

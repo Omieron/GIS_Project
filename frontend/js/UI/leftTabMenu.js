@@ -99,8 +99,6 @@ function activateTab(tabId) {
   }
 }
 
-// js/events/foursquareSwipe.js
-
 export function enableFoursquareSwipe() {
   const container = document.getElementById('fsq-container');
   const leftPanel = document.getElementById('foursquare-card');
@@ -147,4 +145,76 @@ export function enableFoursquareSwipe() {
   leftPanel.classList.add('active');
   rightPanel.classList.remove('active');
   setDotActive('left');
+}
+
+const highwayColors = {
+  motorway: '#ff0000',
+  trunk: '#ff7f00',
+  primary: '#ffa500',
+  secondary: '#ffff00',
+  tertiary: '#9acd32',
+  residential: '#00bfff',
+  unclassified: '#cccccc',
+  service: '#999999',
+  footway: '#00ff7f',
+  path: '#228b22',
+  cycleway: '#8a2be2',
+  unknown: '#888888'
+};
+
+export function renderOverpassLegend(map) {
+  const legendContainer = document.getElementById('road-legend');
+  if (!legendContainer || !map) return;
+
+  legendContainer.innerHTML = '<strong>Görünen Yol Tipleri</strong><br><br>';
+
+  const source = map.getSource('overpass-roads');
+  if (!source) {
+    legendContainer.innerHTML += '<em>Yol katmanı bulunamadı.</em>';
+    return;
+  }
+
+  // Mapbox GL JS v2'de ._data yerine getSource()._options?.data da olabilir
+  const geojson = source._data || source._options?.data;
+  if (!geojson || !geojson.features) {
+    legendContainer.innerHTML += '<em>Yol verisi yüklenemedi.</em>';
+    return;
+  }
+
+  const foundTypes = new Set();
+
+  geojson.features.forEach(f => {
+    const type = f.properties?.highway;
+    if (type) foundTypes.add(type);
+  });
+
+  if (foundTypes.size === 0) {
+    legendContainer.innerHTML += '<em>Gösterilecek yol tipi yok.</em>';
+    return;
+  }
+
+  // Her bir aktif yol tipini DOM’a ekle
+  [...foundTypes].sort().forEach(type => {
+    const color = highwayColors[type] || highwayColors.unknown;
+
+    const item = document.createElement('div');
+    item.style.display = 'flex';
+    item.style.alignItems = 'center';
+    item.style.marginBottom = '6px';
+
+    const colorBox = document.createElement('div');
+    colorBox.style.width = '16px';
+    colorBox.style.height = '16px';
+    colorBox.style.marginRight = '8px';
+    colorBox.style.backgroundColor = color;
+    colorBox.style.border = '1px solid #ccc';
+    colorBox.style.borderRadius = '4px';
+
+    const label = document.createElement('span');
+    label.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+
+    item.appendChild(colorBox);
+    item.appendChild(label);
+    legendContainer.appendChild(item);
+  });
 }
