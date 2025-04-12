@@ -162,6 +162,8 @@ const highwayColors = {
   unknown: '#888888'
 };
 
+const highlightLayers = new Set(); // aktif highlight'ları takip et
+
 export function renderOverpassLegend(map) {
   const legendContainer = document.getElementById('road-legend');
   if (!legendContainer || !map) return;
@@ -169,15 +171,9 @@ export function renderOverpassLegend(map) {
   legendContainer.innerHTML = '<strong>Görünen Yol Tipleri</strong><br><br>';
 
   const source = map.getSource('overpass-roads');
-  if (!source) {
-    legendContainer.innerHTML += '<em>Yol katmanı bulunamadı.</em>';
-    return;
-  }
-
-  // Mapbox GL JS v2'de ._data yerine getSource()._options?.data da olabilir
-  const geojson = source._data || source._options?.data;
+  const geojson = source?._data || source?._options?.data;
   if (!geojson || !geojson.features) {
-    legendContainer.innerHTML += '<em>Yol verisi yüklenemedi.</em>';
+    legendContainer.innerHTML += '<em>Yol verisi bulunamadı.</em>';
     return;
   }
 
@@ -188,12 +184,6 @@ export function renderOverpassLegend(map) {
     if (type) foundTypes.add(type);
   });
 
-  if (foundTypes.size === 0) {
-    legendContainer.innerHTML += '<em>Gösterilecek yol tipi yok.</em>';
-    return;
-  }
-
-  // Her bir aktif yol tipini DOM’a ekle
   [...foundTypes].sort().forEach(type => {
     const color = highwayColors[type] || highwayColors.unknown;
 
@@ -201,6 +191,8 @@ export function renderOverpassLegend(map) {
     item.style.display = 'flex';
     item.style.alignItems = 'center';
     item.style.marginBottom = '6px';
+    item.style.cursor = 'pointer';
+    item.dataset.type = type;
 
     const colorBox = document.createElement('div');
     colorBox.style.width = '16px';
@@ -216,5 +208,44 @@ export function renderOverpassLegend(map) {
     item.appendChild(colorBox);
     item.appendChild(label);
     legendContainer.appendChild(item);
+
+    // 👇 Highlight ekle
+    item.addEventListener('click', () => {
+      const layerId = `highlight-${type}`;
+      if (highlightLayers.has(layerId)) {
+        // varsa kaldır
+        if (map.getLayer(layerId)) map.removeLayer(layerId);
+        if (map.getSource(layerId)) map.removeSource(layerId);
+        highlightLayers.delete(layerId);
+        item.style.opacity = '0.5';
+      } else {
+        // yoksa sadece o highway türünü filtrele
+        const filtered = geojson.features.filter(f => f.properties?.highway === type);
+        const highlightGeoJSON = {
+          type: 'FeatureCollection',
+          features: filtered
+        };
+
+        map.addSource(layerId, {
+          type: 'geojson',
+          data: highlightGeoJSON
+        });
+
+        map.addLayer({
+          id: layerId,
+          type: 'line',
+          source: layerId,
+          layout: {},
+          paint: {
+            'line-color': '#000', // siyah ya da parlak bir şey
+            'line-width': 4,
+            'line-opacity': 0.9
+          }
+        });
+
+        highlightLayers.add(layerId);
+        item.style.opacity = '1';
+      }
+    });
   });
 }
