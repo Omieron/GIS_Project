@@ -1,5 +1,8 @@
 // harita sistemi kontrolleri
 import { add3DBuildings } from './3d-buildings.js';
+import { bindMenuToggle } from '../UI/leftMenuToggle.js';
+import { bindTabSwitching } from '../UI/leftMenuToggle.js';
+
 export function addControls(map) {
   // default gelen mapbox kontrolculeri  
   map.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -8,6 +11,8 @@ export function addControls(map) {
 
   // 3d harita gorunumu icin olan toggle
   //add3DToggleControl(map);
+  bindMenuToggle();                 // left menü toggle setup
+  bindTabSwitching();               // left bottom menu setup
 }
 
 // 3d harita gorunumu icin acik olan kod blogu

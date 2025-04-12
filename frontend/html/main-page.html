@@ -7,26 +7,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <link rel="stylesheet" href="../css/main-page.css" />
+  <link rel="stylesheet" href="../css/sol-katman.css" />
 </head>
 
 <body>
 
   <div id="map"></div>
 
-  <div class="top-left-toolbar">
-    <button id="btn-foursquare" class="tool-button">Foursquare</button>
-    <button id="btn-overpass" class="tool-button">Overpass</button>
-    <button id="btn-tomtom" class="tool-button">TomTom</button>
+  <!-- Sol üst kontrol menüsü -->
+  <div class="control-menu">
+    <button id="menu-toggle" class="menu-icon">
+      ☰ <span class="menu-text">Katmanlar</span>
+    </button>
+    <div id="menu-buttons" class="menu-dropdown hidden">
+      <button id="btn-foursquare" class="menu-button">Foursquare</button>
+      <button id="btn-overpass" class="menu-button">Overpass</button>
+      <button id="btn-tomtom" class="menu-button">TomTom</button>
+    </div>
+  </div>
+
+  <!-- Sol alt bilgi kutusu -->
+  <div class="info-card" style="display: none;">
+    <div class="tab-header" id="tab-header"></div>
+    <div class="tab-content" id="tab-content">
+      <div id="foursquare-tab" class="tab-panel">Foursquare içerik</div>
+      <div id="overpass-tab" class="tab-panel">Overpass içerik</div>
+      <div id="tomtom-tab" class="tab-panel">TomTom içerik</div>
+    </div>
   </div>
 
   <div id="foursquare-card">
-    <strong>Foursquare Kategorileri</strong><br/><br/>
-    <label><input type="checkbox" data-cat-id="13032" /> Cafe</label><br/>
-    <label><input type="checkbox" data-cat-id="17145" /> Pharmacy</label><br/>
-    <label><input type="checkbox" data-cat-id="15014" /> Hospital</label><br/>
-    <label><input type="checkbox" data-cat-id="17144" /> Market</label><br/>
-    <label><input type="checkbox" data-cat-id="19007" /> Fuel</label><br/>
-    <label><input type="checkbox" data-cat-id="16032" /> Park</label><br/>
+    <strong>Foursquare Kategorileri</strong><br /><br />
+    <label><input type="checkbox" data-cat-id="13032" /> Cafe</label><br />
+    <label><input type="checkbox" data-cat-id="17145" /> Pharmacy</label><br />
+    <label><input type="checkbox" data-cat-id="15014" /> Hospital</label><br />
+    <label><input type="checkbox" data-cat-id="17144" /> Market</label><br />
+    <label><input type="checkbox" data-cat-id="19007" /> Fuel</label><br />
+    <label><input type="checkbox" data-cat-id="16032" /> Park</label><br />
   </div>
 
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
