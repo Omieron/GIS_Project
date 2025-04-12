@@ -1,7 +1,7 @@
 // harita sistemi kontrolleri
 import { add3DBuildings } from './3d-buildings.js';
-import { bindMenuToggle } from '../UI/leftMenuToggle.js';
-import { bindTabSwitching } from '../UI/leftMenuToggle.js';
+import { bindMenuToggle } from '../UI/leftTopMenuToggle.js';
+import { bindTabSwitching } from '../UI/leftTabMenu.js';
 
 export function addControls(map) {
   // default gelen mapbox kontrolculeri  

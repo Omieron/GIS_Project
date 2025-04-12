@@ -85,7 +85,7 @@
 
 /* Sol alt cardbox */
 
-/* Sol alt bilgi kutusu */
+/* Ana info kartı */
 .info-card {
     position: absolute;
     bottom: 0;
@@ -105,22 +105,32 @@
   /* Sekme başlıkları */
   .tab-header {
     display: flex;
-    border-bottom: 1px solid #ccc;
     background: #f5f5f5;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     overflow: hidden;
+    width: 100%;
   }
   
+  /* Sekme tekse tüm alanı kaplasın */
+  .tab-header.single-tab .tab {
+    flex-basis: 100%;
+  }
+  
+  /* Her sekme */
   .tab {
-    flex: 1;
-    padding: 10px 12px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* isim solda, ✕ sağda */
+    gap: 6px;
+    padding: 8px 12px;
     cursor: pointer;
-    font-size: 14px;
-    background: #e0e0e0;
+    background-color: #e0e0e0;
     border-right: 1px solid #ccc;
-    transition: background 0.2s ease;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+    flex-grow: 1;
+    min-width: 0;
   }
   
   .tab:last-child {
@@ -128,14 +138,33 @@
   }
   
   .tab:hover {
-    background: #d0d0d0;
+    background-color: #d6d6d6;
   }
   
   .tab.active {
-    background: white;
-    border-bottom: 2px solid white;
+    background-color: white;
     font-weight: bold;
     z-index: 2;
+  }
+  
+  /* ✕ butonu */
+  .tab-close {
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    margin-left: 6px;
+  }
+  
+  .tab-close:hover {
+    color: red;
+  }
+  
+  /* Sekme içindeki isim kısmı */
+  .tab span:not(.tab-close) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   /* Sekme içeriği */

@@ -1,15 +1,4 @@
-import { removeCircle } from '../events/circle-handlers.js'; // 🔥 import et
-
-export function bindMenuToggle() {
-  const toggleBtn = document.getElementById('menu-toggle');
-  const menuBox = document.getElementById('menu-buttons');
-
-  if (!toggleBtn || !menuBox) return;
-
-  toggleBtn.addEventListener('click', () => {
-    menuBox.classList.toggle('active');
-  });
-}
+import { removeCircle } from '../map/circleRegistry.js'; // 🔥 import et
 
 export function bindTabSwitching() {
   const tabs = document.querySelectorAll('.tab');
