@@ -149,49 +149,28 @@ export function bindFoursquareEvents(map) {
     const card = document.getElementById('foursquare-card');
     card.style.display = 'block';
 
-    // Panel içeriğini temizle ve yeniden oluştur
-    card.innerHTML = '<strong>Foursquare Kategorileri</strong><br/><br/>';
+    // HTML elemanlarına event listener ekle
+    setupExistingCheckboxes(card, map, marker);
+  });
+}
 
-    // Tümünü Seç Toggle
-    const toggleAllLabel = document.createElement('label');
-    toggleAllLabel.style.display = 'flex';
-    toggleAllLabel.style.alignItems = 'center';
-    toggleAllLabel.style.marginBottom = '12px';
-    toggleAllLabel.style.fontWeight = 'bold';
-
-    const toggleAllInput = document.createElement('input');
-    toggleAllInput.type = 'checkbox';
-    toggleAllInput.style.marginRight = '8px';
-    toggleAllInput.dataset.toggleAll = 'true';
-
+function setupExistingCheckboxes(card, map, marker) {
+  // "Tümünü Seç" checkbox'ını bul
+  const toggleAllInput = card.querySelector('input[data-toggle-all="true"]');
+  if (toggleAllInput) {
     toggleAllInput.addEventListener('change', async () => {
-      const allCheckboxes = card.querySelectorAll('input[type="checkbox"]:not([data-toggle-all])');
+      const allCheckboxes = card.querySelectorAll('input[type="checkbox"]:not([data-toggle-all="true"])');
       allCheckboxes.forEach(cb => cb.checked = toggleAllInput.checked);
 
       await updateFoursquareMarkers(map, marker);
     });
+  }
 
-    toggleAllLabel.appendChild(toggleAllInput);
-    toggleAllLabel.appendChild(document.createTextNode('Tümünü Seç'));
-    card.appendChild(toggleAllLabel);
-
-    // Kategori checkboxları
-    Object.entries(categoryMapping).forEach(([key, value]) => {
-      const label = document.createElement('label');
-      label.style.cssText = 'display: flex; align-items: center; margin-bottom: 6px;';
-
-      const input = document.createElement('input');
-      input.type = 'checkbox';
-      input.style.marginRight = '8px';
-      input.dataset.category = key;
-
-      input.addEventListener('change', async () => {
-        await updateFoursquareMarkers(map, marker);
-      });
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(key));
-      card.appendChild(label);
+  // Kategori checkbox'larını bul
+  const categoryCheckboxes = card.querySelectorAll('input[data-cat-id]');
+  categoryCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', async () => {
+      await updateFoursquareMarkers(map, marker);
     });
   });
 }
@@ -228,10 +207,23 @@ async function updateFoursquareMarkers(map, marker) {
 }
 
 function getSelectedCategories(card) {
+  // Değişiklik: data-cat-id attribute'una göre değeri alıyoruz
   const selected = [];
-  card.querySelectorAll('input[type="checkbox"]:not([data-toggle-all])').forEach((cb) => {
-    if (cb.checked) selected.push(cb.dataset.category);
+  const categoryCheckboxes = card.querySelectorAll('input[data-cat-id]:checked');
+  
+  categoryCheckboxes.forEach(checkbox => {
+    const catId = checkbox.getAttribute('data-cat-id');
+    // ID'ye göre kategorinin adını bul
+    for (const [category, ids] of Object.entries(categoryMapping)) {
+      if (ids.includes(parseInt(catId))) {
+        if (!selected.includes(category)) {
+          selected.push(category);
+        }
+        break;
+      }
+    }
   });
+  
   return selected;
 }
 

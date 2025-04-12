@@ -75,16 +75,73 @@
           <!-- Sol: kategori seçimleri -->
           <div class="fsq-left" id="foursquare-card">
             <strong>Foursquare Kategorileri</strong><br /><br />
-            <label><input type="checkbox" data-cat-id="13032" /> Cafe</label><br />
-            <label><input type="checkbox" data-cat-id="17145" /> Pharmacy</label><br />
-            <label><input type="checkbox" data-cat-id="15014" /> Hospital</label><br />
-            <label><input type="checkbox" data-cat-id="17144" /> Market</label><br />
-            <label><input type="checkbox" data-cat-id="19007" /> Fuel</label><br />
-            <label><input type="checkbox" data-cat-id="16032" /> Park</label><br />
+            
+            <!-- Tümünü Seç Toggle -->
+            <label class="switch-row">
+              <span>Tümünü Seç</span>
+              <label class="switch">
+                <input type="checkbox" data-toggle-all="true" />
+                <span class="slider"></span>
+              </label>
+            </label>
+            
+            <!-- Cafe -->
+            <label class="switch-row">
+              <span>Cafe</span>
+              <label class="switch">
+                <input type="checkbox" data-cat-id="13032" />
+                <span class="slider"></span>
+              </label>
+            </label>
+            
+            <!-- Pharmacy -->
+            <label class="switch-row">
+              <span>Pharmacy</span>
+              <label class="switch">
+                <input type="checkbox" data-cat-id="17145" />
+                <span class="slider"></span>
+              </label>
+            </label>
+            
+            <!-- Hospital -->
+            <label class="switch-row">
+              <span>Hospital</span>
+              <label class="switch">
+                <input type="checkbox" data-cat-id="15014" />
+                <span class="slider"></span>
+              </label>
+            </label>
+            
+            <!-- Market -->
+            <label class="switch-row">
+              <span>Market</span>
+              <label class="switch">
+                <input type="checkbox" data-cat-id="17144" />
+                <span class="slider"></span>
+              </label>
+            </label>
+            
+            <!-- Fuel -->
+            <label class="switch-row">
+              <span>Fuel</span>
+              <label class="switch">
+                <input type="checkbox" data-cat-id="19007" />
+                <span class="slider"></span>
+              </label>
+            </label>
+            
+            <!-- Park -->
+            <label class="switch-row">
+              <span>Park</span>
+              <label class="switch">
+                <input type="checkbox" data-cat-id="16032" />
+                <span class="slider"></span>
+              </label>
+            </label>
           </div>
 
           <!-- Sağ: sayfa içerikleri -->
-          <div class="fsq-right" id="foursquare-info">
+          <!-- <div class="fsq-right" id="foursquare-info">
             <div class="fsq-slide fsq-active-slide" id="fsq-page-1">
               <p>Seçilen kategorilere ait genel bilgi veya içerik.</p>
             </div>
@@ -96,7 +153,7 @@
               <span class="fsq-dot active-dot"></span>
               <span class="fsq-dot"></span>
             </div>
-          </div>
+          </div> -->
 
         </div>
       </div>

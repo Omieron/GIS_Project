@@ -186,87 +186,19 @@
 
 
 /* Slider mantığı */
-
-.fsq-split-container {
-    display: flex;
-    width: 100%;
-    gap: 12px;
-    transition: transform 0.3s ease;
-}
-
-.fsq-split-container.swiped-left {
-    transform: translateX(-100%);
-}
-
-.fsq-left.hidden {
-    display: none;
-}
-
 .fsq-left {
-    flex: 1;
-    min-width: 120px;
-    font-size: 14px;
-}
-
-fsq-left.active {
-    display: block;
-}
-
-.fsq-left label {
-    display: block;
-    margin-bottom: 6px;
-}
-
-.fsq-left input[type="checkbox"] {
-    margin-right: 6px;
-}
-
-.fsq-right {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-.fsq-right.active {
-    display: block;
-}
-
-.fsq-slide {
-    display: none;
-    height: 100px;
-    overflow-y: auto;
-    padding: 8px;
-    background: #f9f9f9;
+    width: 250px;
+    padding: 15px;
     border: 1px solid #ddd;
-    border-radius: 6px;
-}
-
-.fsq-active-slide {
-    display: block;
-}
-
-.fsq-pagination {
+    border-radius: 8px;
+  }
+  
+  .fsq-switch-row {
     display: flex;
-    justify-content: center;
-    margin-top: 8px;
-    gap: 6px;
-}
-
-.fsq-dot {
-    width: 8px;
-    height: 8px;
-    background-color: #ccc;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.fsq-dot.active-dot {
-    background-color: #333;
-}
-
-.fsq-left,
-.fsq-right {
-    display: none;
-}
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-family: sans-serif;
+  }
+  
