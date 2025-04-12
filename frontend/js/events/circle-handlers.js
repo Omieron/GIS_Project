@@ -21,6 +21,11 @@ export function bindUIEvents(map) {
     if (!circleRegistry.has('overpass')) {
       const marker = createDraggableCircle(map, 'overpass');
       circleRegistry.set('overpass', marker);
+
+      const event = new CustomEvent('circle:created', {
+        detail: { type: 'overpass', marker, id: 'overpass' }
+      });
+      window.dispatchEvent(event);
     } else {
       console.log('⚠️ Overpass çemberi zaten var');
     }
