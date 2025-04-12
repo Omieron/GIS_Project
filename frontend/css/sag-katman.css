@@ -97,6 +97,9 @@ input:checked+.slider::before {
 
 
 
+
+
+
 /* AI CHATBOX KISMI */
 .chatbox-wrapper {
     position: absolute;
@@ -218,6 +221,7 @@ input:checked+.slider::before {
     cursor: pointer;
     padding: 0;
     margin-left: 6px;
+    margin-right: 6px;
     width: 36px;
     height: 36px;
     display: flex;

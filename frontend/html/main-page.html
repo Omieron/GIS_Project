@@ -18,7 +18,9 @@
   <!-- Sağ üst ayar butonu ve panel -->
   <!-- Sağ üst sabit konumlandırma -->
   <div class="settings-wrapper">
-    <button id="settings-toggle" class="settings-icon" title="Ayarlar">⚙️</button>
+    <button id="settings-toggle" class="settings-icon" title="Ayarlar">
+      <img src="../js/assets/settings-white.png" alt="Record" />
+    </button>
 
     <div id="settings-card" class="settings-card hidden">
       <strong>Harita Ayarları</strong><br /><br />
@@ -60,11 +62,11 @@
     <div class="chatbox-messages" id="chat-messages"></div>
 
     <div class="chatbox-input-area">
-      <input type="text" id="chat-input" placeholder="Bir şey yazın..." />
-      <button id="chat-send">Gönder</button>
       <button id="chat-record" class="record-btn" title="Sesle Yaz">
         <img src="../js/assets/microphone.png" alt="Record" />
       </button>
+      <input type="text" id="chat-input" placeholder="Bir şey yazın..." />
+      <button id="chat-send">Gönder</button>
     </div>
   </div>
 
@@ -75,8 +77,8 @@
     </button>
     <div id="menu-buttons" class="menu-dropdown hidden">
       <button id="btn-foursquare" class="menu-button">Foursquare</button>
-      <button id="btn-overpass" class="menu-button">Overpass</button>
-      <button id="btn-tomtom" class="menu-button">TomTom</button>
+      <button id="btn-overpass" class="menu-button">Yollar</button>
+      <button id="btn-tomtom" class="menu-button">Binalar</button>
     </div>
   </div>
 
@@ -105,7 +107,7 @@
 
             <!-- Cafe -->
             <label class="switch-row">
-              <span>Cafe</span>
+              <span>Kafe</span>
               <label class="switch">
                 <input type="checkbox" data-cat-id="13032" />
                 <span class="slider"></span>
@@ -114,7 +116,7 @@
 
             <!-- Pharmacy -->
             <label class="switch-row">
-              <span>Pharmacy</span>
+              <span>Eczane</span>
               <label class="switch">
                 <input type="checkbox" data-cat-id="17145" />
                 <span class="slider"></span>
@@ -123,7 +125,7 @@
 
             <!-- Hospital -->
             <label class="switch-row">
-              <span>Hospital</span>
+              <span>Hastane</span>
               <label class="switch">
                 <input type="checkbox" data-cat-id="15014" />
                 <span class="slider"></span>
@@ -141,7 +143,7 @@
 
             <!-- Fuel -->
             <label class="switch-row">
-              <span>Fuel</span>
+              <span>Benzinlik</span>
               <label class="switch">
                 <input type="checkbox" data-cat-id="19007" />
                 <span class="slider"></span>

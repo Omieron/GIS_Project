@@ -46,7 +46,6 @@ function startRecording(btn, input) {
   try {
     recognition.start();
     isRecording = true;
-    input.placeholder = "🎙️ Konuşun, durdurmak için mikrofona basın...";
     btn.classList.add('recording');
   } catch (err) {
     console.error("🎙️ Kayıt başlatılamadı:", err);
