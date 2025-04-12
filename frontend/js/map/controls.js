@@ -1,7 +1,7 @@
 // harita sistemi kontrolleri
 import { add3DBuildings } from './3d-buildings.js';
 import { bindMenuToggle } from '../UI/leftTopMenuToggle.js';
-import { bindTabSwitching } from '../UI/leftTabMenu.js';
+import { bindTabSwitching, enableFoursquareSwipe } from '../UI/leftTabMenu.js';
 
 export function addControls(map) {
   // default gelen mapbox kontrolculeri  
@@ -13,6 +13,11 @@ export function addControls(map) {
   //add3DToggleControl(map);
   bindMenuToggle();                 // left menü toggle setup
   bindTabSwitching();               // left bottom menu setup
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    enableFoursquareSwipe();
+  });
+  
 }
 
 // 3d harita gorunumu icin acik olan kod blogu

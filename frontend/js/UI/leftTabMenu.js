@@ -98,3 +98,53 @@ function activateTab(tabId) {
     activePanel.classList.add('active');
   }
 }
+
+// js/events/foursquareSwipe.js
+
+export function enableFoursquareSwipe() {
+  const container = document.getElementById('fsq-container');
+  const leftPanel = document.getElementById('foursquare-card');
+  const rightPanel = document.getElementById('foursquare-info');
+  const dotLeft = document.getElementById('dot-left');
+  const dotRight = document.getElementById('dot-right');
+
+  if (!container || !leftPanel || !rightPanel || !dotLeft || !dotRight) {
+    console.warn("🛑 Swipe için gerekli DOM elemanları bulunamadı.");
+    return;
+  }
+
+  let startX = 0;
+
+  function setDotActive(which) {
+    dotLeft.classList.remove('active-dot');
+    dotRight.classList.remove('active-dot');
+    if (which === 'left') dotLeft.classList.add('active-dot');
+    if (which === 'right') dotRight.classList.add('active-dot');
+  }
+
+  container.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  container.addEventListener('touchend', (e) => {
+    const endX = e.changedTouches[0].clientX;
+    const deltaX = endX - startX;
+
+    if (deltaX < -50) {
+      leftPanel.classList.remove('active');
+      rightPanel.classList.add('active');
+      setDotActive('right');
+    }
+
+    if (deltaX > 50) {
+      rightPanel.classList.remove('active');
+      leftPanel.classList.add('active');
+      setDotActive('left');
+    }
+  });
+
+  // Başlangıçta sol panel aktif
+  leftPanel.classList.add('active');
+  rightPanel.classList.remove('active');
+  setDotActive('left');
+}

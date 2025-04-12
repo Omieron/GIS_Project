@@ -60,7 +60,8 @@
     opacity: 1;
     transform: translateY(0);
     padding: 12px;
-    margin-top: 16px; /* margin burada da olmalı */
+    margin-top: 16px;
+    /* margin burada da olmalı */
     pointer-events: auto;
 }
 
@@ -96,32 +97,34 @@
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
     font-family: sans-serif;
     z-index: 999;
-    display: none; /* Başta gizli */
+    display: none;
+    /* Başta gizli */
     flex-direction: column;
     border-top: 1px solid #ccc;
     border-right: 1px solid #ccc;
-  }
-  
-  /* Sekme başlıkları */
-  .tab-header {
+}
+
+/* Sekme başlıkları */
+.tab-header {
     display: flex;
     background: #f5f5f5;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     overflow: hidden;
     width: 100%;
-  }
-  
-  /* Sekme tekse tüm alanı kaplasın */
-  .tab-header.single-tab .tab {
+}
+
+/* Sekme tekse tüm alanı kaplasın */
+.tab-header.single-tab .tab {
     flex-basis: 100%;
-  }
-  
-  /* Her sekme */
-  .tab {
+}
+
+/* Her sekme */
+.tab {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* isim solda, ✕ sağda */
+    justify-content: space-between;
+    /* isim solda, ✕ sağda */
     gap: 6px;
     padding: 8px 12px;
     cursor: pointer;
@@ -131,52 +134,139 @@
     font-size: 14px;
     flex-grow: 1;
     min-width: 0;
-  }
-  
-  .tab:last-child {
+}
+
+.tab:last-child {
     border-right: none;
-  }
-  
-  .tab:hover {
+}
+
+.tab:hover {
     background-color: #d6d6d6;
-  }
-  
-  .tab.active {
+}
+
+.tab.active {
     background-color: white;
     font-weight: bold;
     z-index: 2;
-  }
-  
-  /* ✕ butonu */
-  .tab-close {
+}
+
+/* ✕ butonu */
+.tab-close {
     font-weight: bold;
     color: #999;
     cursor: pointer;
     transition: color 0.2s ease;
     margin-left: 6px;
-  }
-  
-  .tab-close:hover {
+}
+
+.tab-close:hover {
     color: red;
-  }
-  
-  /* Sekme içindeki isim kısmı */
-  .tab span:not(.tab-close) {
+}
+
+/* Sekme içindeki isim kısmı */
+.tab span:not(.tab-close) {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  
-  /* Sekme içeriği */
-  .tab-content {
+}
+
+/* Sekme içeriği */
+.tab-content {
     padding: 12px;
     min-height: 80px;
-  }
-  
-  .tab-panel {
+}
+
+.tab-panel {
     display: none;
-  }
-  
-  .tab-panel.active {
+}
+
+.tab-panel.active {
     display: block;
-  }
+}
+
+
+/* Slider mantığı */
+
+.fsq-split-container {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    transition: transform 0.3s ease;
+}
+
+.fsq-split-container.swiped-left {
+    transform: translateX(-100%);
+}
+
+.fsq-left.hidden {
+    display: none;
+}
+
+.fsq-left {
+    flex: 1;
+    min-width: 120px;
+    font-size: 14px;
+}
+
+fsq-left.active {
+    display: block;
+}
+
+.fsq-left label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.fsq-left input[type="checkbox"] {
+    margin-right: 6px;
+}
+
+.fsq-right {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.fsq-right.active {
+    display: block;
+}
+
+.fsq-slide {
+    display: none;
+    height: 100px;
+    overflow-y: auto;
+    padding: 8px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.fsq-active-slide {
+    display: block;
+}
+
+.fsq-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+    gap: 6px;
+}
+
+.fsq-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.fsq-dot.active-dot {
+    background-color: #333;
+}
+
+.fsq-left,
+.fsq-right {
+    display: none;
+}

@@ -26,25 +26,48 @@
     </div>
   </div>
 
-  <!-- Sol alt bilgi kutusu -->
-  <div class="info-card" style="display: none;">
-    <div class="tab-header" id="tab-header"></div>
-    <div class="tab-content" id="tab-content">
-      <div id="foursquare-tab" class="tab-panel">Foursquare içerik</div>
-      <div id="overpass-tab" class="tab-panel">Overpass içerik</div>
-      <div id="tomtom-tab" class="tab-panel">TomTom içerik</div>
-    </div>
-  </div>
+ <!-- Sol alt cardbox – info-card container -->
+<div class="info-card" style="display: none;">
+  <div class="tab-header" id="tab-header"></div>
 
-  <div id="foursquare-card">
-    <strong>Foursquare Kategorileri</strong><br /><br />
-    <label><input type="checkbox" data-cat-id="13032" /> Cafe</label><br />
-    <label><input type="checkbox" data-cat-id="17145" /> Pharmacy</label><br />
-    <label><input type="checkbox" data-cat-id="15014" /> Hospital</label><br />
-    <label><input type="checkbox" data-cat-id="17144" /> Market</label><br />
-    <label><input type="checkbox" data-cat-id="19007" /> Fuel</label><br />
-    <label><input type="checkbox" data-cat-id="16032" /> Park</label><br />
+  <div class="tab-content" id="tab-content">
+
+    <!-- Tüm tab-panel'lar buraya -->
+    <div id="foursquare-tab" class="tab-panel">
+      <div class="fsq-split-container" id="fsq-container">
+        
+        <!-- Sol: kategori seçimleri -->
+        <div class="fsq-left" id="foursquare-card">
+          <strong>Foursquare Kategorileri</strong><br /><br />
+          <label><input type="checkbox" data-cat-id="13032" /> Cafe</label><br />
+          <label><input type="checkbox" data-cat-id="17145" /> Pharmacy</label><br />
+          <label><input type="checkbox" data-cat-id="15014" /> Hospital</label><br />
+          <label><input type="checkbox" data-cat-id="17144" /> Market</label><br />
+          <label><input type="checkbox" data-cat-id="19007" /> Fuel</label><br />
+          <label><input type="checkbox" data-cat-id="16032" /> Park</label><br />
+        </div>
+    
+        <!-- Sağ: sayfa içerikleri -->
+        <div class="fsq-right" id="foursquare-info">
+          <div class="fsq-slide fsq-active-slide" id="fsq-page-1">
+            <p>Seçilen kategorilere ait genel bilgi veya içerik.</p>
+          </div>
+          <div class="fsq-slide" id="fsq-page-2">
+            <p>Seçilen yerlere ait detaylı bina bilgileri.</p>
+          </div>
+    
+          <div class="fsq-pagination">
+            <span class="fsq-dot active-dot"></span>
+            <span class="fsq-dot"></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Diğer tab-panel'lar: overpass-tab, tomtom-tab... -->
   </div>
+</div>
 
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <script type="module" src="../js/main.js"></script>
