@@ -1,11 +1,12 @@
 .settings-wrapper {
     position: absolute;
     top: 10px;
-    right: 80px; /* biraz sola kayık */
+    right: 80px;
+    /* biraz sola kayık */
     z-index: 9999;
-  }
-  
-  .settings-icon {
+}
+
+.settings-icon {
     background: #4CAF50;
     color: white;
     border: none;
@@ -14,30 +15,31 @@
     font-size: 18px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-  }
-  
-  .settings-icon:hover {
+}
+
+.settings-icon:hover {
     background-color: #388E3C;
-  }
-  
-  .settings-card {
+}
+
+.settings-card {
     position: absolute;
-    top: 100%; /* butonun altından başlasın */
+    top: 100%;
+    /* butonun altından başlasın */
     right: 0;
     margin-top: 6px;
     background: white;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     padding: 12px;
     width: 200px;
     display: none;
-  }
-  
-  .settings-card.show {
-    display: block;
-  }
+}
 
-  /* Her satırı düzenli hizala */
+.settings-card.show {
+    display: block;
+}
+
+/* Her satırı düzenli hizala */
 .switch-row {
     display: flex;
     justify-content: space-between;
@@ -45,23 +47,23 @@
     margin-bottom: 12px;
     font-size: 14px;
     font-family: sans-serif;
-  }
-  
-  /* Toggle switch */
-  .switch {
+}
+
+/* Toggle switch */
+.switch {
     position: relative;
     display: inline-block;
     width: 42px;
     height: 22px;
-  }
-  
-  .switch input {
+}
+
+.switch input {
     opacity: 0;
     width: 0;
     height: 0;
-  }
-  
-  .slider {
+}
+
+.slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -71,9 +73,9 @@
     background-color: #ccc;
     transition: .4s;
     border-radius: 22px;
-  }
-  
-  .slider::before {
+}
+
+.slider::before {
     position: absolute;
     content: "";
     height: 16px;
@@ -83,20 +85,20 @@
     background-color: white;
     transition: .4s;
     border-radius: 50%;
-  }
-  
-  input:checked + .slider {
+}
+
+input:checked+.slider {
     background-color: #4CAF50;
-  }
-  
-  input:checked + .slider::before {
+}
+
+input:checked+.slider::before {
     transform: translateX(20px);
-  }
+}
 
 
 
-  /* AI CHATBOX KISMI */
-  .chatbox-wrapper {
+/* AI CHATBOX KISMI */
+.chatbox-wrapper {
     position: absolute;
     bottom: 0;
     right: 24px;
@@ -109,16 +111,16 @@
     font-family: sans-serif;
     transition: height 0.3s ease;
     z-index: 999;
-  }
-  
+}
+
 
 
 .chatbox-wrapper:hover,
 .chatbox-wrapper.pinned {
-  height: 400px;
+    height: 400px;
 }
-  
-  .chatbox-header {
+
+.chatbox-header {
     position: relative;
     background: #4CAF50;
     color: white;
@@ -127,14 +129,14 @@
     font-size: 16px;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
-    box-shadow: 0 -1px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  
-  .chatbox-messages {
+}
+
+.chatbox-messages {
     flex: 1;
     padding: 12px;
     overflow-y: auto;
@@ -142,47 +144,47 @@
     flex-direction: column;
     gap: 8px;
     background: white;
-  }
-  
-  .chatbox-message {
+}
+
+.chatbox-message {
     max-width: 75%;
     padding: 10px 14px;
     border-radius: 16px;
     font-size: 14px;
     line-height: 1.4;
     word-wrap: break-word;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  
-  .chatbox-message.user {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chatbox-message.user {
     align-self: flex-end;
     background-color: #dcf8c6;
     border-bottom-right-radius: 4px;
-  }
-  
-  .chatbox-message.ai {
+}
+
+.chatbox-message.ai {
     align-self: flex-start;
     background-color: #f1f0f0;
     border-bottom-left-radius: 4px;
-  }
-  
-  .chatbox-input-area {
+}
+
+.chatbox-input-area {
     display: flex;
     padding: 8px;
     border-top: 1px solid #ddd;
     background: white;
-  }
-  
-  #chat-input {
+}
+
+#chat-input {
     flex: 1;
     padding: 6px 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
     margin-right: 6px;
     font-size: 14px;
-  }
-  
-  #chat-send {
+}
+
+#chat-send {
     padding: 6px 12px;
     background: #4CAF50;
     color: white;
@@ -190,13 +192,56 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-  }
+}
 
-  .chatbox-pin {
+.chatbox-pin {
     background: none;
     border: none;
     font-size: 16px;
     cursor: pointer;
     color: white;
     margin-left: 8px;
-  }
+}
+
+#chat-mic {
+    padding: 6px 10px;
+    background: #eeeeee;
+    border: none;
+    border-radius: 6px;
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+.record-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 6px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    /* dairesel buton için */
+    transition: background-color 0.3s ease;
+}
+
+
+.record-btn img {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.record-btn.recording {
+    background-color: rgba(255, 0, 0, 0.1);
+    /* hafif kırmızımsı arka plan */
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.5);
+}
+
+.record-btn.recording img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 6px red);
+}
