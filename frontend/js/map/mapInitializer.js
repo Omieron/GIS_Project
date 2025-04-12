@@ -1,5 +1,7 @@
+import { MAPBOX_API_KEY } from '../../config.js';
+
 export function initMap() {
-  mapboxgl.accessToken = 'mapbox apim';
+  mapboxgl.accessToken = MAPBOX_API_KEY;
 
   const map = new mapboxgl.Map({
     container: 'map',

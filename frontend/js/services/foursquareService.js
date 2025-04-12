@@ -1,4 +1,4 @@
-const FSQ_API_KEY = 'YOUR_FOURSQUARE_API_KEY'; // 🔐 kendi API key'ini buraya koy
+import { FOURSQUARE_API_KEY } from '../../config.js';
 
 export async function fetchFoursquarePlaces(center, radius = 500, categoryIds = []) {
   if (!categoryIds.length) return [];
@@ -8,7 +8,7 @@ export async function fetchFoursquarePlaces(center, radius = 500, categoryIds = 
   const res = await fetch(url, {
     headers: {
       Accept: 'application/json',
-      Authorization: FSQ_API_KEY
+      Authorization: FOURSQUARE_API_KEY
     }
   });
 
