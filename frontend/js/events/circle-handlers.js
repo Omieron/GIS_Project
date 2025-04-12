@@ -4,9 +4,14 @@ import { circleRegistry } from '../map/circleRegistry.js';
 export function bindUIEvents(map) {
   document.getElementById('btn-foursquare')?.addEventListener('click', () => {
     if (!circleRegistry.has('foursquare')) {
-      console.log("✅ Yeni Foursquare circle oluşturuluyor");
       const marker = createDraggableCircle(map, 'foursquare');
       circleRegistry.set('foursquare', marker);
+  
+      // 💥 Özel event fırlat
+      const event = new CustomEvent('circle:created', {
+        detail: { type: 'foursquare', marker }
+      });
+      window.dispatchEvent(event);
     } else {
       console.log("⚠️ Foursquare çemberi zaten var");
     }
