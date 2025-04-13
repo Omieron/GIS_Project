@@ -59,6 +59,15 @@ export function removeCircle(id) {
         console.log("🏗️ Bina source'u silindi.");
       }
       window.buildingCache = null;
+
+      // Bilgi panelini güncelle
+      const statsEl = document.getElementById('kat-istatistik');
+      if (statsEl) {
+        statsEl.innerHTML = `
+      <li>Şuan da herhangi bir bina verisi bulunmamaktadır</li>
+    `;
+      }
+      
     }
 
   } else {

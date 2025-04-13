@@ -147,7 +147,7 @@ body {
   top: 220px;
   right: 0;
   height: auto;
-  z-index: 999;
+  z-index: 1000;
   display: flex;
   font-family: sans-serif;
   /* Panel tamamen ekran dışında kalacak şekilde */
@@ -539,7 +539,7 @@ input:checked+.slider::before {
 .chatbox-wrapper {
   position: absolute;
   bottom: 0;
-  right: 24px;
+  right: 50px;
   width: 400px;
   height: 60px;
   background: transparent;
