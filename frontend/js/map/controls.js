@@ -2,6 +2,8 @@
 import { bindMenuToggle } from '../UI/leftTopMenuToggle.js';
 import { bindTabSwitching, enableFoursquareSwipe } from '../UI/leftTabMenu.js';
 import { bindSettingsToggle, add3DToggleControl, bindDarkModeToggle } from '../UI/settings.js';
+import { initBuildingFilters } from '../events/maksHandler.js';
+
 export function addControls(map) {
   // default gelen mapbox kontrolculeri  
   map.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -17,6 +19,7 @@ export function addControls(map) {
     enableFoursquareSwipe();
     add3DToggleControl(map);
     bindDarkModeToggle(map);
+    initBuildingFilters(map);
   });
   
 }

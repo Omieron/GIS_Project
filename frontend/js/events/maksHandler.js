@@ -1,95 +1,45 @@
-export const offsetX = 0;
-export const offsetY = -0.0158;
-
-export function applyOffset(features) {
-  if (!features || !Array.isArray(features.features)) return features;
-  
-  // Derin kopya oluştur
-  const offsetData = JSON.parse(JSON.stringify(features));
-  
-  offsetData.features.forEach(feature => {
-    const geom = feature.geometry;
-    if (geom?.type === 'MultiPolygon') {
-      geom.coordinates.forEach(polygon => {
-        polygon.forEach(ring => {
-          ring.forEach(coord => {
-            coord[0] += offsetX; // longitude
-            coord[1] += offsetY; // latitude
-          });
-        });
-      });
-    } else if (geom?.type === 'Polygon') {
-      geom.coordinates.forEach(ring => {
-        ring.forEach(coord => {
-          coord[0] += offsetX;
-          coord[1] += offsetY;
-        });
-      });
-    }
+export function initBuildingFilters(map) {
+  document.getElementById('apply-filters-btn')?.addEventListener('click', () => {
+    applyBuildingFilters(map);
   });
-  
-  return offsetData;
 }
 
-export function fetchBuildingHandler(map) {
-  window.addEventListener('circle:created', async (e) => {
-    if (e.detail.type !== 'bina') return;
+export function applyBuildingFilters(map) {
+  const source = map.getSource('building-source');
+  if (!source || !source._data) return;
 
-    const marker = e.detail.marker;
-    const radius = 500;
+  const allData = window.buildingCache;
+  if (!allData || !allData.features) return;
 
-    // İlk yükleme + drag sonrası güncelleme için
-    async function fetchAndRender(lat, lng) {
-      try {
-        // Offset uygulanmamış haliyle istek at
-        const lonQuery = lng - offsetX;
-        const latQuery = lat - offsetY;
+  const allFeatures = allData.features;
 
-        const url = `http://localhost:8001/maks/bina?lon=${lonQuery}&lat=${latQuery}&radius=${radius}`;
-        const response = await fetch(url);
-        const rawData = await response.json();
+  const filtered = allFeatures.filter(f => {
+    const p = f.properties || {};
+    let ok = true;
 
-        if (!rawData || !rawData.features) {
-          console.warn('⚠️ Geçersiz GeoJSON verisi:', rawData);
-          return;
-        }
+    const zeminUstu = document.querySelector('[data-filter="zeminustu"]').value;
+    if (zeminUstu && parseInt(p.ZEMINUSTUKATSAYISI ?? -1) < parseInt(zeminUstu)) ok = false;
 
-        // Offset uygula
-        const data = applyOffset(rawData);
+    const zeminAlti = document.querySelector('[data-filter="zeminalti"]').value;
+    if (zeminAlti && parseInt(p.ZEMINALTIKATSAYISI ?? -1) < parseInt(zeminAlti)) ok = false;
 
-        if (map.getSource('building-source')) {
-          map.getSource('building-source').setData(data);
-        } else {
-          map.addSource('building-source', {
-            type: 'geojson',
-            data: data
-          });
+    const durum = document.querySelector('[data-filter="durum"]').value;
+    if (durum && String(p.DURUM ?? '') !== durum) ok = false;
 
-          map.addLayer({
-            id: 'building-layer',
-            type: 'fill',
-            source: 'building-source',
-            paint: {
-              'fill-color': '#ff6600',
-              'fill-opacity': 0.5
-            }
-          });
-        }
+    const tip = document.querySelector('[data-filter="tip"]').value;
+    if (tip && String(p.TIP ?? '') !== tip) ok = false;
 
-        console.log(`🏢 ${data.features.length} bina bulundu ve çizildi.`);
-      } catch (err) {
-        console.error('❌ Bina verisi alınamadı:', err);
-      }
-    }
+    const sera = document.querySelector('[data-filter="seragazi"]').value;
+    if (sera && String(p.SERAGAZEMISYONSINIF ?? '') !== sera) ok = false;
 
-    // Başlangıçta bir kez çağır
-    const { lng, lat } = marker.getLngLat();
-    fetchAndRender(lat, lng);
-
-    // Drag sonrası her değişimde tekrar veri al
-    marker.on('dragend', () => {
-      const newCenter = marker.getLngLat();
-      fetchAndRender(newCenter.lat, newCenter.lng);
-    });
+    return ok;
   });
+  console.log("🎯 Örnek özellikler:", allFeatures[0]?.properties);
+  const filteredGeoJSON = {
+    type: "FeatureCollection",
+    features: filtered
+  };
+
+  map.getSource('building-source').setData(filteredGeoJSON);
+  console.log(`✅ ${filtered.length} bina filtrelendi.`);
 }

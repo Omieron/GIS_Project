@@ -58,6 +58,7 @@ export function removeCircle(id) {
         map.removeSource('building-source');
         console.log("🏗️ Bina source'u silindi.");
       }
+      window.buildingCache = null;
     }
 
   } else {
