@@ -13,6 +13,8 @@
 
   <div id="map"></div>
 
+  <button id="start-btn" class="start-button">Hadi Başla</button>
+
   <!-- Sağ üst ayar butonu ve panel -->
   <!-- Sağ üst sabit konumlandırma -->
   <div class="settings-wrapper">
@@ -42,7 +44,7 @@
   </div>
 
   <!-- Sağ alt tarafta ai chatbox mevcut  -->
-  <div class="chatbox-wrapper" id="chatbox-wrapper">
+  <div class="chatbox-wrapper hide-on-start" id="chatbox-wrapper">
     <div class="chatbox-header">
       💬 AI Chat
       <button id="pin-toggle" class="chatbox-pin" title="Sabit Tut">📌</button>
@@ -60,7 +62,7 @@
   </div>
 
   <!-- Sol üst kontrol menüsü -->
-  <div class="control-menu">
+  <div class="control-menu hide-on-start">
     <button id="menu-toggle" class="menu-icon">
       ☰ <span class="menu-text">Katmanlar</span>
     </button>
@@ -72,7 +74,7 @@
   </div>
 
   <!-- Sol alt cardbox – info-card container -->
-  <div class="info-card" style="display: none;">
+  <div class="info-card hide-on-start">
     <div class="tab-header" id="tab-header"></div>
 
     <div class="tab-content" id="tab-content">

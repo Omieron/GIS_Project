@@ -22,6 +22,44 @@ body {
 }
 
 /* ===============================================
+     BAŞLANGIÇ TUŞU
+     =============================================== */
+
+.start-button {
+  position: absolute;
+  bottom: 40px;
+  /* ← daha aşağıya kayar (eskisi belki 20px'ti) */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  transition: background-color 0.2s ease;
+}
+
+.start-button:hover {
+  background-color: #388E3C;
+}
+
+.hide-on-start {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.show-after-start {
+  opacity: 1 !important;
+  pointer-events: auto;
+}
+
+/* ===============================================
      LEFT MENU / CONTROL MENU
      =============================================== */
 .control-menu {
@@ -284,6 +322,7 @@ body {
     opacity: 0;
     transform: translateY(-5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -295,8 +334,10 @@ body {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 4px;       /* Eskiden 8px'ti, azaltıldı */
-  padding-bottom: 4px;      /* Eskiden 6px'ti */
+  margin-bottom: 4px;
+  /* Eskiden 8px'ti, azaltıldı */
+  padding-bottom: 4px;
+  /* Eskiden 6px'ti */
   border-bottom: 1px solid #ccc;
   color: #333;
 }
@@ -306,8 +347,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 4px; /* Eskiden 8px veya 6px olabilir, azaltıldı */
-  margin-bottom: 4px; /* Ekstra alt boşluk için */
+  margin-top: 4px;
+  /* Eskiden 8px veya 6px olabilir, azaltıldı */
+  margin-bottom: 4px;
+  /* Ekstra alt boşluk için */
   font-size: 14px;
 }
 

@@ -91,7 +91,7 @@ export async function handleOverpassCircle(marker, map) {
           },
           paint: {
             'line-color': highwayColorMap,
-            'line-width': 2
+            'line-width': 4
           }
         });
       }

@@ -19,7 +19,7 @@ export function createDraggableCircle(map, id, radiusInMeters = 500, initialCent
       type: 'fill',
       source: sourceId,
       paint: {
-        'fill-color': '#00BFFF',
+        'fill-color': '#5C6BC0',
         'fill-opacity': 0.3
       }
     });

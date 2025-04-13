@@ -73,8 +73,22 @@ export function fetchBuildingHandler(map) {
             type: 'fill',
             source: 'building-source',
             paint: {
-              'fill-color': '#ff6600',
-              'fill-opacity': 0.5
+              'fill-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'ZEMINUSTUKATSAYISI'],
+                0,  '#b3e5fc',  // çok açık mavi
+                1,  '#81d4fa',
+                2,  '#4fc3f7',
+                3,  '#29b6f6',
+                4,  '#03a9f4',
+                5,  '#039be5',
+                6,  '#0288d1',
+                7,  '#0277bd',
+                8,  '#01579b',
+                10, '#003B73'   // koyu lacivert
+              ],
+              'fill-opacity': 0.75
             }
           });
         }
