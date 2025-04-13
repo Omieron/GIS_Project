@@ -34,6 +34,7 @@ export function applyBuildingFilters(map) {
 
     return ok;
   });
+
   console.log("🎯 Örnek özellikler:", allFeatures[0]?.properties);
   const filteredGeoJSON = {
     type: "FeatureCollection",
@@ -42,4 +43,29 @@ export function applyBuildingFilters(map) {
 
   map.getSource('building-source').setData(filteredGeoJSON);
   console.log(`✅ ${filtered.length} bina filtrelendi.`);
+
+  updateBinaList(filtered);
+
+}
+
+function updateBinaList(filtered) {
+  const statsContainer = document.getElementById('kat-istatistik');
+  if (!statsContainer) return;
+
+  const counter = {};
+  filtered.forEach(f => {
+    const kat = f.properties.ZEMINUSTUKATSAYISI;
+    if (kat !== undefined) {
+      counter[kat] = (counter[kat] || 0) + 1;
+    }
+  });
+
+  if (Object.keys(counter).length === 0) {
+    statsContainer.innerHTML = "<li>Şuan da herhangi bir bina verisi bulunmamaktadır</li>";
+  } else {
+    statsContainer.innerHTML = Object.keys(counter)
+      .sort((a, b) => a - b)
+      .map(k => `<li>${k}+ katlı bina: ${counter[k]} adet</li>`)
+      .join('');
+  }
 }

@@ -72,14 +72,14 @@ export function fetchBuildingHandler(map) {
 
           map.addLayer({
             id: 'building-layer',
-            type: 'fill',
+            type: 'fill-extrusion',
             source: 'building-source',
             paint: {
-              'fill-color': [
+              'fill-extrusion-color': [
                 'interpolate',
                 ['linear'],
                 ['get', 'ZEMINUSTUKATSAYISI'],
-                0, '#b3e5fc',  // çok açık mavi
+                0, '#b3e5fc',
                 1, '#81d4fa',
                 2, '#4fc3f7',
                 3, '#29b6f6',
@@ -88,9 +88,11 @@ export function fetchBuildingHandler(map) {
                 6, '#0288d1',
                 7, '#0277bd',
                 8, '#01579b',
-                10, '#003B73'   // koyu lacivert
+                10, '#003B73'
               ],
-              'fill-opacity': 0.75
+              'fill-extrusion-height': ['*', ['get', 'ZEMINUSTUKATSAYISI'], 3.2],
+              'fill-extrusion-base': 0,
+              'fill-extrusion-opacity': 0.85
             }
           });
         }
@@ -112,6 +114,9 @@ export function fetchBuildingHandler(map) {
         map.getSource('building-source').setData(data);
 
         renderBuildingStats(data.features);
+
+        const uniqueIds = new Set(data.features.map(f => f.properties?.ID)).size;
+        console.log(`🔢 Gerçek bina sayısı (benzersiz ID): ${uniqueIds}`);/*  */
 
       } catch (err) {
         console.error('❌ Bina verisi alınamadı:', err);

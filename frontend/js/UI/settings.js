@@ -44,11 +44,18 @@ export function add3DToggleControl(map) {
     }
   
     darkToggle.addEventListener('change', () => {
-      if (darkToggle.checked) {
+      const isDark = darkToggle.checked;
+    
+      if (isDark) {
         map.setStyle('mapbox://styles/mapbox/dark-v11');
+        document.body.classList.add('dark-mode');
       } else {
         map.setStyle('mapbox://styles/mapbox/streets-v12');
+        document.body.classList.remove('dark-mode');
       }
-      if(document.getElementById('toggle-3d').checked) add3DToggleControl(map);
+    
+      if (document.getElementById('toggle-3d').checked) {
+        add3DToggleControl(map);
+      }
     });
   }
