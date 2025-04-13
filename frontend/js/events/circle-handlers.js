@@ -39,16 +39,16 @@ export function bindUIEvents(map) {
     }
   });
 
-  document.getElementById('btn-tomtom')?.addEventListener('click', () => {
-    if (!circleRegistry.has('tomtom')) {
-      const marker = createDraggableCircle(map, 'tomtom');
-      circleRegistry.set('tomtom', marker);
+  document.getElementById('btn-bina')?.addEventListener('click', () => {
+    if (!circleRegistry.has('bina')) {
+      const marker = createDraggableCircle(map, 'bina');
+      circleRegistry.set('bina', marker);
 
-      // tomtom tabını aktif et
-      showInfoCard('tomtom-tab', 'TomTom');
+      // bina tabını aktif et
+      showInfoCard('bina-tab', 'Bina');
 
     } else {
-      console.log('⚠️ TomTom çemberi zaten var');
+      console.log('⚠️ Bina çemberi zaten var');
     }
   });
 }

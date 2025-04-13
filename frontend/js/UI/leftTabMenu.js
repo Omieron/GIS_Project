@@ -46,7 +46,7 @@ export function showInfoCard(tabId, label) {
     closeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
 
-      removeCircle(label.toLowerCase()); // ← "foursquare", "overpass", "tomtom" gibi
+      removeCircle(label.toLowerCase()); // ← "foursquare", "overpass", "bina" gibi
 
       newTab.remove();
       const panel = document.getElementById(tabId);
