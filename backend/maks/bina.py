@@ -16,7 +16,7 @@ async def get_buildings_within_radius(
         query = text("""
         SELECT jsonb_build_object(
             'type', 'FeatureCollection',
-            'features', jsonb_agg(feature)
+            'features', COALESCE(jsonb_agg(feature), '[]'::jsonb)
         ) AS geojson
         FROM (
             SELECT jsonb_build_object(
