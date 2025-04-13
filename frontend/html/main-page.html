@@ -180,6 +180,41 @@
         <div id="road-legend"></div>
       </div>
 
+      <div id="bina-tab" class="tab-panel">
+        <div id="bina-filters">
+          <strong>Filtrele:</strong><br /><br />
+          
+          <!-- Zemin üstü kat sayısı -->
+          <label class="switch-row">
+            <span>1 Kat ve Üzeri</span>
+            <label class="switch">
+              <input type="checkbox" id="filter-zeminustu" />
+              <span class="slider"></span>
+            </label>
+          </label>
+
+          <!-- Durum -->
+          <label class="switch-row">
+            <span>Aktif Binalar</span>
+            <label class="switch">
+              <input type="checkbox" id="filter-durum" />
+              <span class="slider"></span>
+            </label>
+          </label>
+
+          <!-- Taban Alanı -->
+          <label class="switch-row">
+            <span>Taban Alanı &gt; 300</span>
+            <label class="switch">
+              <input type="checkbox" id="filter-taban" />
+              <span class="slider"></span>
+            </label>
+          </label>
+
+          <br />
+          <button id="apply-bina-filters" class="menu-button">Filtrele</button>
+        </div>
+      </div>
       <!-- Diğer tab-panel'lar: overpass-tab, bina-tab... -->
     </div>
   </div>

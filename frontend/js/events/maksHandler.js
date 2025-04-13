@@ -34,52 +34,62 @@ export function applyOffset(features) {
 export function fetchBuildingHandler(map) {
   window.addEventListener('circle:created', async (e) => {
     if (e.detail.type !== 'bina') return;
-    
+
     const marker = e.detail.marker;
-    let { lng, lat } = marker.getLngLat();
     const radius = 500;
-    
-    try {
-        
-      console.log(lng - offsetX);
-      console.log(lat - offsetY);
-      lng = lng - offsetX;
-      lat = lat - offsetY;
-      // Merkez koordinatları offset UYGULANMADAN kullan
-      const url = `http://localhost:8001/maks/bina?lon=${lng}&lat=${lat}&radius=${radius}`;
-      const response = await fetch(url);
-      const rawData = await response.json();
-      
-      if (!rawData || !rawData.features) {
-        console.warn('⚠️ Geçersiz GeoJSON verisi:', rawData);
-        return;
+
+    // İlk yükleme + drag sonrası güncelleme için
+    async function fetchAndRender(lat, lng) {
+      try {
+        // Offset uygulanmamış haliyle istek at
+        const lonQuery = lng - offsetX;
+        const latQuery = lat - offsetY;
+
+        const url = `http://localhost:8001/maks/bina?lon=${lonQuery}&lat=${latQuery}&radius=${radius}`;
+        const response = await fetch(url);
+        const rawData = await response.json();
+
+        if (!rawData || !rawData.features) {
+          console.warn('⚠️ Geçersiz GeoJSON verisi:', rawData);
+          return;
+        }
+
+        // Offset uygula
+        const data = applyOffset(rawData);
+
+        if (map.getSource('building-source')) {
+          map.getSource('building-source').setData(data);
+        } else {
+          map.addSource('building-source', {
+            type: 'geojson',
+            data: data
+          });
+
+          map.addLayer({
+            id: 'building-layer',
+            type: 'fill',
+            source: 'building-source',
+            paint: {
+              'fill-color': '#ff6600',
+              'fill-opacity': 0.5
+            }
+          });
+        }
+
+        console.log(`🏢 ${data.features.length} bina bulundu ve çizildi.`);
+      } catch (err) {
+        console.error('❌ Bina verisi alınamadı:', err);
       }
-      
-      // Veriyi göstermeden ÖNCE offset uygula
-      const data = applyOffset(rawData);
-      
-      if (map.getSource('building-source')) {
-        map.getSource('building-source').setData(data);
-      } else {
-        map.addSource('building-source', {
-          type: 'geojson',
-          data: data
-        });
-        
-        map.addLayer({
-          id: 'building-layer',
-          type: 'fill',
-          source: 'building-source',
-          paint: {
-            'fill-color': '#ff6600',
-            'fill-opacity': 0.5
-          }
-        });
-      }
-      
-      console.log(`🏢 ${data.features.length} bina bulundu ve çizildi.`);
-    } catch (err) {
-      console.error('❌ Bina verisi alınamadı:', err);
     }
+
+    // Başlangıçta bir kez çağır
+    const { lng, lat } = marker.getLngLat();
+    fetchAndRender(lat, lng);
+
+    // Drag sonrası her değişimde tekrar veri al
+    marker.on('dragend', () => {
+      const newCenter = marker.getLngLat();
+      fetchAndRender(newCenter.lat, newCenter.lng);
+    });
   });
 }
