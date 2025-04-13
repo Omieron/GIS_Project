@@ -140,6 +140,66 @@ body {
 }
 
 /* ===============================================
+     BİLGİ PANELİ - SAĞDAKİ YAPI (Sadece yazı döndürülmüş)
+=============================================== */
+.info-hover-tab {
+  position: fixed;
+  top: 220px;
+  right: 0;
+  height: auto;
+  z-index: 999;
+  display: flex;
+  font-family: sans-serif;
+  /* Panel tamamen ekran dışında kalacak şekilde */
+  transform: translateX(calc(100% - 36px)); /* Bilgi etiketinin genişliği kadar fark bırak */
+  transition: transform 0.3s ease;
+}
+
+/* Bilgi kutusu (dikey) */
+.info-hover-tab .info-label {
+  writing-mode: vertical-rl; /* Dikey yazı modu korunuyor */
+  transform: rotate(180deg); /* 180 derece döndürme - saat yönünün tersine dikey yazı */
+  background: #4CAF50;
+  color: white;
+  padding: 16px 10px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #388E3C;
+  z-index: 2;
+}
+
+/* Bilgi kartı - bilgi kutucuğunun sağına yapışık */
+.info-hover-tab .info-panel {
+  background: white;
+  border: 1px solid #ccc;
+  border-left: none; /* Sol kenarı boş bırak */
+  padding: 16px;
+  width: 200px;
+  min-height: 180px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+/* Hover ile sola kaydırma (beyaz kartın görünür olması için) */
+.info-hover-tab:hover {
+  transform: translateX(0);
+}
+
+/* İçerik listesi */
+#kat-istatistik {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 12px;
+}
+
+#kat-istatistik li {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+
+/* ===============================================
      INFO CARD (LEFT BOTTOM)
      =============================================== */
 .info-card {

@@ -1,3 +1,5 @@
+import { renderBuildingStats } from '../events/infoHandler.js';
+
 export const offsetX = 0;
 export const offsetY = -0.0158;
 
@@ -77,15 +79,15 @@ export function fetchBuildingHandler(map) {
                 'interpolate',
                 ['linear'],
                 ['get', 'ZEMINUSTUKATSAYISI'],
-                0,  '#b3e5fc',  // çok açık mavi
-                1,  '#81d4fa',
-                2,  '#4fc3f7',
-                3,  '#29b6f6',
-                4,  '#03a9f4',
-                5,  '#039be5',
-                6,  '#0288d1',
-                7,  '#0277bd',
-                8,  '#01579b',
+                0, '#b3e5fc',  // çok açık mavi
+                1, '#81d4fa',
+                2, '#4fc3f7',
+                3, '#29b6f6',
+                4, '#03a9f4',
+                5, '#039be5',
+                6, '#0288d1',
+                7, '#0277bd',
+                8, '#01579b',
                 10, '#003B73'   // koyu lacivert
               ],
               'fill-opacity': 0.75
@@ -108,6 +110,8 @@ export function fetchBuildingHandler(map) {
         // 2️⃣ Tüm veriyle yeniden çiz
         window.buildingCache = data;
         map.getSource('building-source').setData(data);
+
+        renderBuildingStats(data.features);
 
       } catch (err) {
         console.error('❌ Bina verisi alınamadı:', err);
