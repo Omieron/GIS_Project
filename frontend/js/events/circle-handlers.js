@@ -43,10 +43,15 @@ export function bindUIEvents(map) {
     if (!circleRegistry.has('bina')) {
       const marker = createDraggableCircle(map, 'bina');
       circleRegistry.set('bina', marker);
-
+  
+      // 💥 Eksik olan event fırlatma
+      const event = new CustomEvent('circle:created', {
+        detail: { type: 'bina', marker, id: 'bina' }
+      });
+      window.dispatchEvent(event);
+  
       // bina tabını aktif et
       showInfoCard('bina-tab', 'Bina');
-
     } else {
       console.log('⚠️ Bina çemberi zaten var');
     }

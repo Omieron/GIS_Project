@@ -21,7 +21,7 @@
     </button>
 
     <div id="settings-card" class="settings-card hidden">
-      <strong>Harita Ayarları</strong><br /><br />
+      <strong>Harita Ayarları</strong>
 
       <label class="switch-row">
         <span>3D Haritalandırma</span>
@@ -38,16 +38,7 @@
           <span class="slider"></span>
         </label>
       </label>
-
-      <!-- <label class="switch-row">
-        <span>Animasyonlar</span>
-        <label class="switch">
-          <input type="checkbox" id="toggle-anim" />
-          <span class="slider"></span>
-        </label>
-      </label> -->
     </div>
-
   </div>
 
   <!-- Sağ alt tarafta ai chatbox mevcut  -->
@@ -158,21 +149,6 @@
             </label>
           </div>
 
-          <!-- Sağ: sayfa içerikleri -->
-          <!-- <div class="fsq-right" id="foursquare-info">
-            <div class="fsq-slide fsq-active-slide" id="fsq-page-1">
-              <p>Seçilen kategorilere ait genel bilgi veya içerik.</p>
-            </div>
-            <div class="fsq-slide" id="fsq-page-2">
-              <p>Seçilen yerlere ait detaylı bina bilgileri.</p>
-            </div>
-
-            <div class="fsq-pagination">
-              <span class="fsq-dot active-dot"></span>
-              <span class="fsq-dot"></span>
-            </div>
-          </div> -->
-
         </div>
       </div>
 
@@ -180,7 +156,72 @@
         <div id="road-legend"></div>
       </div>
 
-      <!-- Diğer tab-panel'lar: overpass-tab, bina-tab... -->
+      <div id="bina-tab" class="tab-panel">
+        <div class="fsq-left" id="bina-card">
+          <strong>Bina Filtreleri</strong><br /><br />
+      
+          <label class="switch-row">
+            <span>Zemin Üstü Kat Sayısı</span>
+            <select data-filter="zeminustu" class="filter-select">
+              <option value="">Tümü</option>
+              <option value="1">1+</option>
+              <option value="2">2+</option>
+              <option value="3">3+</option>
+              <option value="4">4+</option>
+              <option value="5">5+</option>
+              <option value="10">10+</option>
+            </select>
+          </label>
+      
+          <label class="switch-row">
+            <span>Zemin Altı Kat Sayısı</span>
+            <select data-filter="zeminalti" class="filter-select">
+              <option value="">Tümü</option>
+              <option value="1">1-</option>
+              <option value="2">2-</option>
+              <option value="3">3-</option>
+              <option value="4">4-</option>
+              <option value="5">5-</option>
+            </select>
+          </label>
+      
+          <label class="switch-row">
+            <span>Durum (Yapılmış/Yıkılmış)</span>
+            <select data-filter="durum">
+              <option value="">Tümü</option>
+              <option value="1">Mevcut</option>
+              <option value="2">Yıkılmış</option>
+            </select>
+          </label>
+      
+          <label class="switch-row">
+            <span>Yapı Tipi</span>
+            <select data-filter="tip">
+              <option value="">Tümü</option>
+              <option value="1">Konut</option>
+              <option value="2">Ticari</option>
+              <option value="3">Karma</option>
+              <option value="4">Diğer</option>
+            </select>
+          </label>
+      
+          <label class="switch-row">
+            <span>Seragazı Emisyon Sınıfı</span>
+            <select data-filter="seragazi">
+              <option value="">Tümü</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </label>
+          <button id="apply-filters-btn" class="menu-button">Filtreleri Uygula</button>
+        
+        </div>
+      </div>
+      
+      
+
     </div>
   </div>
 
