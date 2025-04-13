@@ -99,153 +99,34 @@ function activateTab(tabId) {
   }
 }
 
-export function enableFoursquareSwipe() {
-  const container = document.getElementById('fsq-container');
-  const leftPanel = document.getElementById('foursquare-card');
-  const rightPanel = document.getElementById('foursquare-info');
-  const dotLeft = document.getElementById('dot-left');
-  const dotRight = document.getElementById('dot-right');
-
-  if (!container || !leftPanel || !rightPanel || !dotLeft || !dotRight) {
-    console.warn("🛑 Swipe için gerekli DOM elemanları bulunamadı.");
-    return;
-  }
-
-  let startX = 0;
-
-  function setDotActive(which) {
-    dotLeft.classList.remove('active-dot');
-    dotRight.classList.remove('active-dot');
-    if (which === 'left') dotLeft.classList.add('active-dot');
-    if (which === 'right') dotRight.classList.add('active-dot');
-  }
-
-  container.addEventListener('touchstart', (e) => {
-    startX = e.touches[0].clientX;
-  });
-
-  container.addEventListener('touchend', (e) => {
-    const endX = e.changedTouches[0].clientX;
-    const deltaX = endX - startX;
-
-    if (deltaX < -50) {
-      leftPanel.classList.remove('active');
-      rightPanel.classList.add('active');
-      setDotActive('right');
-    }
-
-    if (deltaX > 50) {
-      rightPanel.classList.remove('active');
-      leftPanel.classList.add('active');
-      setDotActive('left');
-    }
-  });
-
-  // Başlangıçta sol panel aktif
-  leftPanel.classList.add('active');
-  rightPanel.classList.remove('active');
-  setDotActive('left');
-}
-
-const highwayColors = {
-  motorway: '#ff0000',
-  trunk: '#ff7f00',
-  primary: '#ffa500',
-  secondary: '#ffff00',
-  tertiary: '#9acd32',
-  residential: '#00bfff',
-  unclassified: '#cccccc',
-  service: '#999999',
-  footway: '#00ff7f',
-  path: '#228b22',
-  cycleway: '#8a2be2',
-  unknown: '#888888'
-};
-
-const highlightLayers = new Set(); // aktif highlight'ları takip et
-
 export function renderOverpassLegend(map) {
-  const legendContainer = document.getElementById('road-legend');
-  if (!legendContainer || !map) return;
-
-  legendContainer.innerHTML = '<strong>Görünen Yol Tipleri</strong><br><br>';
-
+  const legendItems = document.querySelectorAll('#overpass-tab .legend-item');
   const source = map.getSource('overpass-roads');
   const geojson = source?._data || source?._options?.data;
+
+  // Eğer kaynak ya da veri yoksa her şeyi gizle
   if (!geojson || !geojson.features) {
-    legendContainer.innerHTML += '<em>Yol verisi bulunamadı.</em>';
+    legendItems.forEach(item => item.style.display = 'none');
+    console.warn("🛑 Yol verisi bulunamadı.");
     return;
   }
 
-  const foundTypes = new Set();
-
+  // Haritada gerçekten bulunan yol türlerini al
+  const availableTypes = new Set();
   geojson.features.forEach(f => {
-    const type = f.properties?.highway;
-    if (type) foundTypes.add(type);
+    const t = f.properties?.highway;
+    if (t) availableTypes.add(t);
   });
 
-  [...foundTypes].sort().forEach(type => {
-    const color = highwayColors[type] || highwayColors.unknown;
-
-    const item = document.createElement('div');
-    item.style.display = 'flex';
-    item.style.alignItems = 'center';
-    item.style.marginBottom = '6px';
-    item.style.cursor = 'pointer';
-    item.dataset.type = type;
-
-    const colorBox = document.createElement('div');
-    colorBox.style.width = '16px';
-    colorBox.style.height = '16px';
-    colorBox.style.marginRight = '8px';
-    colorBox.style.backgroundColor = color;
-    colorBox.style.border = '1px solid #ccc';
-    colorBox.style.borderRadius = '4px';
-
-    const label = document.createElement('span');
-    label.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-
-    item.appendChild(colorBox);
-    item.appendChild(label);
-    legendContainer.appendChild(item);
-
-    // 👇 Highlight ekle
-    item.addEventListener('click', () => {
-      const layerId = `highlight-${type}`;
-      if (highlightLayers.has(layerId)) {
-        // varsa kaldır
-        if (map.getLayer(layerId)) map.removeLayer(layerId);
-        if (map.getSource(layerId)) map.removeSource(layerId);
-        highlightLayers.delete(layerId);
-        item.style.opacity = '0.5';
-      } else {
-        // yoksa sadece o highway türünü filtrele
-        const filtered = geojson.features.filter(f => f.properties?.highway === type);
-        const highlightGeoJSON = {
-          type: 'FeatureCollection',
-          features: filtered
-        };
-
-        map.addSource(layerId, {
-          type: 'geojson',
-          data: highlightGeoJSON
-        });
-
-        map.addLayer({
-          id: layerId,
-          type: 'line',
-          source: layerId,
-          layout: {},
-          paint: {
-            'line-color': '#000', // siyah ya da parlak bir şey
-            'line-width': 4,
-            'line-opacity': 0.9
-          }
-        });
-
-        highlightLayers.add(layerId);
-        item.style.opacity = '1';
-      }
-    });
+  // Tüm legend item'larını kontrol et
+  legendItems.forEach(item => {
+    const type = item.dataset.type;
+    if (availableTypes.has(type)) {
+      item.style.display = 'flex';  // göster
+    } else {
+      item.style.display = 'none';  // gizle
+    }
   });
+
+  console.log(`🚦 Aktif yol türleri:`, [...availableTypes]);
 }

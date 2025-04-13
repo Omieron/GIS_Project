@@ -13,10 +13,9 @@
 
   <div id="map"></div>
 
-  <button id="start-btn" class="start-button">Hadi Başla</button>
+  <button id="start-btn" class="start-button">Haydi Başlayalım</button>
 
   <!-- Sağ üst ayar butonu ve panel -->
-  <!-- Sağ üst sabit konumlandırma -->
   <div class="settings-wrapper">
     <button id="settings-toggle" class="settings-icon" title="Ayarlar">
       <img src="../js/assets/settings-white.png" alt="Record" />
@@ -85,7 +84,7 @@
 
           <!-- Sol: kategori seçimleri -->
           <div class="fsq-left" id="foursquare-card">
-            <strong>Foursquare Kategorileri</strong><br /><br />
+            <strong>Foursquare Kategorileri</strong><br/>
 
             <!-- Tümünü Seç Toggle -->
             <label class="switch-row">
@@ -155,12 +154,50 @@
       </div>
 
       <div id="overpass-tab" class="tab-panel">
-        <div id="road-legend"></div>
+        <strong>Görünen Yol Tipleri</strong><br/>
+      
+        <div class="legend-item" data-type="motorway">
+          <span class="color-box" style="background-color:#ff0000;"></span> Motorway
+        </div>
+        <div class="legend-item" data-type="trunk">
+          <span class="color-box" style="background-color:#ff7f00;"></span> Trunk
+        </div>
+        <div class="legend-item" data-type="primary">
+          <span class="color-box" style="background-color:#ffa500;"></span> Primary
+        </div>
+        <div class="legend-item" data-type="secondary">
+          <span class="color-box" style="background-color:#ffff00;"></span> Secondary
+        </div>
+        <div class="legend-item" data-type="tertiary">
+          <span class="color-box" style="background-color:#9acd32;"></span> Tertiary
+        </div>
+        <div class="legend-item" data-type="residential">
+          <span class="color-box" style="background-color:#00bfff;"></span> Residential
+        </div>
+        <div class="legend-item" data-type="unclassified">
+          <span class="color-box" style="background-color:#cccccc;"></span> Unclassified
+        </div>
+        <div class="legend-item" data-type="service">
+          <span class="color-box" style="background-color:#999999;"></span> Service
+        </div>
+        <div class="legend-item" data-type="footway">
+          <span class="color-box" style="background-color:#00ff7f;"></span> Footway
+        </div>
+        <div class="legend-item" data-type="path">
+          <span class="color-box" style="background-color:#228b22;"></span> Path
+        </div>
+        <div class="legend-item" data-type="cycleway">
+          <span class="color-box" style="background-color:#8a2be2;"></span> Cycleway
+        </div>
+        <div class="legend-item" data-type="unknown">
+          <span class="color-box" style="background-color:#888888;"></span> Unknown
+        </div>
       </div>
+      
 
       <div id="bina-tab" class="tab-panel">
         <div class="fsq-left" id="bina-card">
-          <strong>Bina Filtreleri</strong><br /><br />
+          <strong>Bina Filtreleri</strong><br/>
       
           <label class="switch-row">
             <span>Zemin Üstü Kat Sayısı</span>
