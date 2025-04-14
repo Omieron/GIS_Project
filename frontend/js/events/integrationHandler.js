@@ -138,8 +138,8 @@ export async function processIntegratedQuery(query, map, appendMessage) {
       const mappedServiceType = mapServiceType(serviceType);
       
       // Create a circle at the location for the service integration
-      createServiceCircle(map, coords, mappedServiceType, locationResponse);
-      
+      //createServiceCircle(map, coords, mappedServiceType, locationResponse);
+      simulateCircleCreation(map, serviceType, [coords.lng, coords.lat]);
       // Add service-specific information to response
       responseText += `<br><br><div class="service-integration">
         <strong>${getServiceTitle(serviceType)}</strong> verilerini yüklüyorum...
@@ -216,76 +216,6 @@ function detectServiceType(query) {
   return 'foursquare';
 }
 
-/**
- * Create a draggable circle for service integration
- */
-
-function createServiceCircle(map, coords, serviceType, location) {
-  // First trigger a custom event to close any existing cards
-  document.dispatchEvent(new CustomEvent('circle:close-all'));
-  
-  // Validate coordinates
-  if (!coords || !coords.lat || !coords.lng ||
-      isNaN(coords.lat) || isNaN(coords.lng) ||
-      coords.lat < -90 || coords.lat > 90 || coords.lng < -180 || coords.lng > 180) {
-    console.error('🚨 Invalid coordinates for circle:', coords);
-    // Default to Edremit center if coordinates are invalid
-    coords = { lat: 39.5942, lng: 27.0246 };
-    console.log('🚨 Using default Edremit coordinates instead');
-  }
-  
-  // Get appropriate radius based on location type
-  let radius = 500; // 500m radius is standard
-  
-  // Adjust radius for different context types
-  if (location && location.place_type) {
-    switch(location.place_type.toLowerCase()) {
-      case 'school':
-      case 'restaurant':
-      case 'icecream':
-      case 'pharmacy':
-        radius = 300; // Smaller radius for precise locations
-        break;
-      case 'hotel':
-        radius = 400; // Medium radius for hotels
-        break;
-      case 'beach':
-      case 'landmark':
-        radius = 800; // Larger radius for natural areas
-        break;
-      case 'settlement':
-        radius = 1500; // Much larger for towns/cities
-        break;
-    }
-  }
-  
-  // Also consider action type for radius adjustment
-  if (location && location.action) {
-    switch(location.action) {
-      case 'contextual-location':
-        // For contextual locations, make radius a bit larger
-        radius = Math.max(radius, 600);
-        break;
-      case 'food-location':
-        // For food locations, slightly smaller radius
-        radius = Math.max(radius, 400);
-        break;
-    }
-  }
-  
-  // Create the circle
-  const options = {
-    color: getServiceColor(serviceType),
-    radius: radius,
-    type: serviceType
-  };
-  
-  // This will trigger the appropriate service handler via the circle:created event
-  createDraggableCircle(map, [coords.lng, coords.lat], options);
-  
-  // Add additional information for the console
-  console.log(`🔵 Created ${serviceType} circle with radius ${radius}m at [${coords.lat}, ${coords.lng}]`);
-}
 
 /**
  * Map the service_type from backend to our service names
@@ -306,21 +236,6 @@ function mapServiceType(serviceType) {
   }
 }
 
-/**
- * Get service color for the circle
- */
-function getServiceColor(serviceType) {
-  switch (serviceType) {
-    case 'foursquare_service':
-    case 'foursquare': return '#F44336'; // Red
-    case 'maks_service':
-    case 'maks': return '#2196F3'; // Blue
-    case 'overpass_service':
-    case 'overpass': return '#4CAF50'; // Green
-    case 'edremit_service': return '#9C27B0'; // Purple for Edremit-specific
-    default: return '#FF9800'; // Orange
-  }
-}
 
 /**
  * Get service title for display
