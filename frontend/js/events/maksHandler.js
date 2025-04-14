@@ -61,23 +61,48 @@ function updateBinaList(filtered) {
   const statsContainer = document.getElementById('kat-istatistik');
   if (!statsContainer) return;
 
-  const counter = {};
-  filtered.forEach(f => {
-    const kat = f.properties.ZEMINUSTUKATSAYISI;
-    if (kat !== undefined) {
-      counter[kat] = (counter[kat] || 0) + 1;
-    }
+  if (!filtered.length) {
+    statsContainer.innerHTML = "<li>Şuan da herhangi bir bina verisi bulunmamaktadır</li>";
+    return;
+  }
+
+  const katCounter = {};
+  const riskCounter = {};
+
+  filtered.forEach(({ properties: p }) => {
+    const kat = p?.ZEMINUSTUKATSAYISI;
+    const risk = p?.RISKSKORU;
+
+    if (kat !== undefined) katCounter[kat] = (katCounter[kat] || 0) + 1;
+    if (risk != null) riskCounter[risk] = (riskCounter[risk] || 0) + 1;
   });
 
-  if (Object.keys(counter).length === 0) {
-    statsContainer.innerHTML = "<li>Şuan da herhangi bir bina verisi bulunmamaktadır</li>";
-  } else {
-    statsContainer.innerHTML = Object.keys(counter)
-      .sort((a, b) => a - b)
-      .map(k => `<li>${k}+ katlı bina: ${counter[k]} adet</li>`)
-      .join('');
-  }
+  const katList = Object.entries(katCounter)
+    .sort((a, b) => a[0] - b[0])
+    .map(([k, v]) => `<li>${k}+ katlı bina: ${v} adet</li>`)
+    .join('');
+
+  const riskLabels = {
+    1: "🟢 Çok Düşük Risk",
+    2: "🟡 Düşük Risk",
+    3: "🟠 Orta Risk",
+    4: "🔴 Yüksek Risk",
+    5: "🟥 Çok Yüksek Risk"
+  };
+
+  const riskList = Object.entries(riskCounter)
+    .sort((a, b) => a[0] - b[0])
+    .map(([r, v]) => `<li>${riskLabels[r] || `Risk ${r}`}: ${v} bina</li>`)
+    .join('');
+
+  statsContainer.innerHTML = `
+    <li><strong>Kat Sayısı Dağılımı</strong></li>
+    ${katList}
+    <li style="margin-top: 20px;"><strong>Deprem Riski Dağılımı</strong></li>
+    ${riskList || "<li>Risk verisi bulunamadı</li>"}
+  `;
 }
+
 
 function checkDepremToggle(map) {
   const toggle = document.getElementById('deprem-toggle');

@@ -216,13 +216,19 @@
   .info-hover-tab .info-panel {
     background: white;
     border: 1px solid #ccc;
-    border-left: none; /* Sol kenarı boş bırak */
+    border-left: none;
     padding: 16px;
     width: 200px;
-    min-height: 180px;
+    min-height: 170px;
+  
+    /* 🔥 Yeni eklenenler */
+    max-height: 170px;        /* Yüksekliği sınırlıyoruz */
+    overflow-y: auto;         /* Uzarsa scroll çıksın */
+  
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
   }
+  
   
   body.dark-mode .info-panel {
     background-color: #1e1e1e;
