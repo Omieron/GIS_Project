@@ -238,7 +238,7 @@ def find_expanded_query(query: str, location: str = None) -> Dict[str, Any]:
     
     return result
 
-def find_food_place(food: str, location: str) -> Dict[str, Any]:
+def find_food_place(food: str = None, location: str = None) -> Dict[str, Any]:
     """
     Find a restaurant serving a specific food
     
@@ -249,6 +249,18 @@ def find_food_place(food: str, location: str) -> Dict[str, Any]:
     Returns:
         Dictionary with restaurant information
     """
+    # Handle missing parameters
+    if food is None:
+        food = "yemek"  # Default to generic "food" in Turkish
+        print(f"Warning: Missing food parameter in find_food_place, using default: {food}")
+        
+    if location is None:
+        # Default to Edremit center if no location specified
+        location = "Edremit"
+        print(f"Warning: Missing location parameter in find_food_place, using default: {location}")
+    
+    print(f"Looking for {food} in {location}")
+    
     # First try a direct search for the food by name
     result = find_place(query=f"{food} restaurant", location=location, radius=3000)
     
@@ -258,7 +270,8 @@ def find_food_place(food: str, location: str) -> Dict[str, Any]:
         return result
     
     # If not found, try using category mappings
-    if food.lower() in FOOD_CATEGORY_MAPPING:
+    # Check for food category mapping
+    if food and food.lower() in FOOD_CATEGORY_MAPPING:
         categories = FOOD_CATEGORY_MAPPING[food.lower()]
         
         # Try each category in order
@@ -269,7 +282,10 @@ def find_food_place(food: str, location: str) -> Dict[str, Any]:
                 return result
     
     # If all else fails, just look for any restaurant
-    return find_place(query="restaurant", location=location, radius=3000)
+    final_result = find_place(query="restaurant", location=location, radius=3000)
+    if "error" not in final_result:
+        final_result["food"] = food
+    return final_result
 
 def find_landmark(landmark_name: str) -> Dict[str, Any]:
     """Find a famous landmark or tourist attraction with expanded search radius"""
