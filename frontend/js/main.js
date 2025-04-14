@@ -9,13 +9,13 @@ import { adjustAi } from './ai_chat/chatbox.js';
 //import { bindMapEvents } from './map/Events.js';
 
 window.buildingCache = null; // bina cache
-const map = initMap();         // harita oluştur
-addControls(map);              // kontrol ekle
-bindUIEvents(map);        // cember olayi eklendi
-bindFoursquareEvents(map); //foursquare datasi ekleniyor
-bindOverpassEvents(map);
+window.map = initMap();      // harita oluştur ve global yap
+addControls(window.map);     // kontrol ekle
+bindUIEvents(window.map);    // cember olayi eklendi
+bindFoursquareEvents(window.map); //foursquare datasi ekleniyor
+bindOverpassEvents(window.map);
 
 document.addEventListener('DOMContentLoaded', () => {
-    adjustAi();
-    fetchBuildingHandler(map);
+    adjustAi(window.map);    // Harita referansını gönder
+    fetchBuildingHandler(window.map);
   });
