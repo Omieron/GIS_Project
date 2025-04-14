@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/ai-toggle.css" />
 </head>
 
 <body>
@@ -57,6 +58,16 @@
   <div class="chatbox-wrapper hide-on-start" id="chatbox-wrapper">
     <div class="chatbox-header">
       💬 AI Chat
+      <div class="ai-mode-selector">
+        <label class="mode-switch-row">
+          <span class="mode-label">Konum</span>
+          <label class="mode-switch">
+            <input type="checkbox" id="ai-mode-toggle">
+            <span class="mode-slider"></span>
+          </label>
+          <span class="mode-label">Bina Filtre</span>
+        </label>
+      </div>
       <button id="pin-toggle" class="chatbox-pin" title="Sabit Tut">📌</button>
     </div>
 

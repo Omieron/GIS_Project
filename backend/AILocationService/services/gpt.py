@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 from typing import List, Dict, Any, Optional
 import openai
 from dotenv import load_dotenv
@@ -18,92 +19,297 @@ async def interpret_location(prompt: str, language: str = "tr"):
     Returns:
         Dictionary with interpreted action and parameters
     """
-    # Simplified message structure without conversation history
-    messages = [
-        {
-            "role": "system",
-            "content": get_system_prompt(language)
-        },
-        {"role": "user", "content": prompt}
-    ]
+    # Get system prompt and function schema if needed
+    system_prompt, function_schema = get_system_prompt(language)
     
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages,
-        temperature=0
-    )
+    # For simplicity in testing, print the input prompt
+    print(f"Input prompt: {prompt}")
 
-    content = response.choices[0].message.content
-    print("GPT Response:\n", content)
     try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        # Fallback if GPT doesn't return valid JSON
-        return {"action": "unknown", "error": "Failed to parse response"}
+        # Set up function calling parameters if in Turkish
+        if language.lower() == "tr":
+            # Make the API call with function calling
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.1,  # Keep consistent, focused responses
+                tools=[{"type": "function", "function": function_schema}],
+                tool_choice={"type": "function", "function": {"name": "process_location_query"}}
+            )
+            
+            # Extract the function call parameters
+            if hasattr(response.choices[0].message, 'tool_calls') and response.choices[0].message.tool_calls:
+                tool_call = response.choices[0].message.tool_calls[0]
+                interpretation = json.loads(tool_call.function.arguments)
+                print(f"Function response: {interpretation}")
+            else:
+                # Fall back to content if tool_calls failed for some reason
+                content = response.choices[0].message.content
+                print(f"No tool calls found, using content: {content}")
+                try:
+                    interpretation = json.loads(content)
+                except json.JSONDecodeError:
+                    interpretation = {"action": "unknown", "error": "Failed to parse response"}
+        else:
+            # Make standard API call for English
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0,
+            )
+            
+            # Parse the response content
+            content = response.choices[0].message.content
+            print(f"Raw response: {content}")
+            try:
+                interpretation = json.loads(content)
+            except json.JSONDecodeError:
+                # Fallback if GPT doesn't return valid JSON
+                interpretation = {"action": "unknown", "error": "Failed to parse response"}
+        
+        # Convert 'landmark' action to 'landmark-search' for consistency with function calling
+        if interpretation.get('action') == 'landmark':
+            interpretation['action'] = 'landmark-search'
+            
+        # Remap 'name' to 'landmark_name' for better consistency
+        if 'name' in interpretation and interpretation.get('action') == 'landmark-search':
+            interpretation['landmark_name'] = interpretation['name']
+            del interpretation['name']
+            
+        # Ensure proper function response format
+        if interpretation.get('action') not in ["user-location", "defined-location", "contextual-location", "food-location", "landmark-search", "expanded-query"]:
+            interpretation['action'] = 'unknown'
+        if 'service_type' not in interpretation:
+            interpretation['service_type'] = 'default_service'
+            
+        return interpretation
+    
+    except Exception as e:
+        print(f"Error in interpreting location: {str(e)}")
+        traceback_str = traceback.format_exc()
+        print(f"Traceback: {traceback_str}")
+        
+        # More detailed error message with language info
+        if language.lower() == "tr":
+            error_msg = f"Türkçe komut işlenemedi: {str(e)}"
+        else:
+            error_msg = f"Error processing English command: {str(e)}"
+            
+        return {
+            "action": "error", 
+            "error": error_msg,
+            "service_type": "default_service"
+        }
 
-def get_system_prompt(language: str = "tr") -> str:
+def get_system_prompt(language: str = "tr"):
     """Get expanded system prompt based on language"""
     if language.lower() == "tr":
-        return (
-            "Görevin, kullanıcının konum, yer ve yemek ile ilgili istek ve sorularını analiz etmek ve sınıflandırmaktır. "
-            "Bu sistem ÖZELLİKLE BALIKESIR'IN EDREMIT ilçesine özel tasarlanmıştır. Herhangi bir yerde Edremit geçtiğinde, Balıkesir'deki Edremit'i kastedildiğini varsay. "
-            "Edremit, Balıkesir'in bir ilçesidir ve Türkiye'nin batısında, Ege Denizi'ne kıyısı olan bir bölgedir. Kaz Dağları (Ida Dağı) eteklerinde yer alır. "
-            "Edremit'te önemli yerler: Edremit şehir merkezi, Akçay, Zeytinli, Güre, Altınoluk yerleşimleri, Kaz Dağları Milli Parkı, Şahindere Kanyonu, Hasanboğuldu Şelalesi ve termal tesislerdir. "
-            "Edremit'te yaygın yiyecekler: Zeytinyağı (bölge zeytinyağı üretimiyle ünlüdür), zeytinli yemekler, Ege mutfağı, balık ve deniz ürünleri, otlu yemeklerdir. "
-            "Her sorguda tüm bağlamı dikkate almalısın. Her zaman geçerli JSON döndürmelisin.\n\n"
+        system_prompt = (
+            "Sen bir konum çözümleme ve yorumlama uzmanısın. Öncelikli olarak Edremit, Balıkesir bölgesinde uzmanlaşmış, ama aynı zamanda tüm Türkiye için konum sorgularını işleyebilen bir sistemsin. Kullanıcılardan gelen konum tabanlı sorguları analiz edip, doğru konum türünü ve hizmet türünü belirleyerek JSON formatında döndüreceksin.\n\n"
             
-            "HIZMET TÜRLERI:\n"
-            "Kullanıcılar dört farklı hizmet türü isteyebilirler ve bu hizmet türlerini belirlemek önemlidir:\n"
-            "1. foursquare_service → kullanıcı Foursquare veri servisini kullanmak istiyorsa (kafeler, restoranlar, mekanlar vb. için)\n"
-            "2. maks_service → kullanıcı MAKS bina verisi servisini kullanmak istiyorsa (binalar, yapılar vb. için)\n"
-            "3. overpass_service → kullanıcı Overpass servisini kullanmak istiyorsa (yollar, caddeler, sokaklar vb. için)\n"
-            "4. default_service → kullanıcı belirli bir servis belirtmemişse (sadece konum)\n\n"
+            "KRİTİK ÖNEMLİ KURALLAR:\n"
+            "1. TAMAMLANMAMIŞ VEYA BELİRSİZ SORGULAR İÇİN VARSAYILAN OLARAK EDREMİT BÖLGESİNİ KULLAN!\n"
+            "   'Sahil kenarı', 'eczane', 'otel', 'restoran' gibi tek başına anlam ifade etmeyen sorgular gelirse,\n"
+            "   bunları otomatik olarak 'Edremit'te sahil kenarı', 'Edremit'te bir eczane' olarak yorumla.\n"
+            "   Açıkça başka bir lokasyon belirtilmedikçe, TÜM sorguları Edremit bölgesi bağlamında değerlendir.\n\n"
             
-            "YER/KONUM TÜRLERI:\n"
-            "Ek olarak, konum sorgusunun türünü de belirlemelisin:\n"
-            "1. user-location → kullanıcı kendi konumunu soruyorsa (örnek: 'Ben neredeyim?', 'Konumum nedir?')\n"
-            "2. defined-location → kullanıcı bilinen bir yerin koordinatlarını soruyorsa (örnek: 'Edremit nerede?', 'Akçay nerede?', 'Kaz Dağları nerede?')\n"
-            "3. contextual-location → kullanıcı bir yerin yakınındaki başka bir yeri soruyorsa (örnek: 'Edremit yakınında bir kafe', 'Akçay'da bir restoran', 'Altınoluk'ta plaj')\n"
-            "4. food-location → kullanıcı belirli bir yemek yiyebileceği bir yer arıyorsa (örnek: 'Edremit'te zeytinyağlı yemek nerede yiyebilirim?', 'Akçay'da balık restoranı', 'Güre'de kahvaltı')\n"
-            "5. landmark → kullanıcı tanınmış bir yer işaretini, turistik bir yeri veya anıtı soruyorsa (örnek: 'Kaz Dağları Milli Parkı nerede?', 'Şahindere Kanyonu nerede?', 'Hasanboğuldu nasıl gidilir?')\n"
-            "6. expanded-query → kullanıcı karmaşık bir yer sorgusu yapıyorsa (örnek: 'Edremit'te çocuklarla gidilebilecek yerler', 'Akçay'da denize yakın iyi bir restoran', 'Altınoluk'ta konaklama önerileri')\n\n"
+            "2. HİÇBİR ZAMAN 'error' VEYA 'unknown' ACTION DÖNDÜRME!\n"
+            "   Sorguyu anlamakta zorluk çeksen bile, bir best-effort yanıt döndür.\n"
+            "   Belirsiz bir sorgu ise varsayılan olarak 'defined-location' action ile 'edremit' location_name kullan.\n\n"
             
-            "Her sorguyu analiz ederken, hem konum türünü hem de hizmet türünü belirlemelisin. Herhangi bir yerde sadece 'Edremit' geçerse, 'Balıkesir, Edremit'i kasted. Başka Edremit'lerle karıştırma.\n\n"
+            "3. TÜM SORGULARDA MUTLAKA service_type BELİRLE!\n"
+            "   Belirsiz durumlarda 'foursquare_service' kullan.\n\n"
+            
+            "4. YAZIM HATALARINI VE TÜRKÇE KARAKTER PROBLEMLERİNİ DÜZELT!\n"
+            "   'Akcay', 'Altinoluk' gibi girişleri 'Akçay', 'Altınoluk' olarak düzeltmeye çalış.\n"
+            "   'Kaz Daglari' -> 'Kaz Dağları', 'Gure' -> 'Güre' olarak yorumla.\n\n"
+            
+            "TEMEL ODAK - EDREMİT BÖLGESİ:\n"
+            "Edremit körfezi şunları içerir: Edremit merkez, Akçay, Altınoluk, Zeytinli, Güre ve çevre bölgeler. Bu alanlarla ilgili sorgularda, yerel bilgi ile detaylı işleme sağla.\n\n"
+            
+            "İKİNCİL KABİLİYET - TÜM TÜRKİYE:\n"
+            "Ayrıca şunlarla sınırlı olmamak üzere diğer Türk şehirleri ve bölgeleri hakkındaki sorguları da işleyebilirsin: İstanbul, Ankara, İzmir, Bursa, Antalya ve Türkiye genelindeki diğer yerler. Ancak bu yerler belirtilmedikçe, varsayılan olarak Edremit bölgesini kullan.\n\n"
+            
+            "Edremit bölgesi hakkında detaylı bilgi:\n"
+            "Edremit: 39.5942 N, 27.0246 E koordinatlarında, Kaz Dağları'nın eteklerinde, zeytin üretimi ve zeytinyağı ile ünlü\n"
+            "Akçay: 39.5776 N, 26.9184 E koordinatlarında, plajları, otelleri ve deniz aktiviteleriyle ünlü bir tatil beldesi\n"
+            "Altınoluk: 39.5691 N, 26.7353 E koordinatlarında, temiz havası, pansiyon ve apart otelleri ve denizi ile biliniyor\n"
+            "Zeytinli: 39.5829 N, 26.9823 E koordinatlarında, zeytin bahçeleriyle ünlü\n"
+            "Güre: 39.5866 N, 26.8835 E koordinatlarında, termal kaynaklarıyla ve spa otelleriyle ünlü\n"
+            "Kaz Dağları: 39.7083 N, 26.8733 E koordinatlarında, biyoçeşitlilik açısından zengin\n\n"
+            
+            "Edremit bölgesindeki önemli konaklama yerleri:\n"
+            "1. Akçay Sahil Oteli: Akçay'da denize sıfır konumda, 39.5762 N, 26.9174 E\n"
+            "2. Altınoluk Hotel: Altınoluk'ta merkezi konumda, 39.5688 N, 26.7355 E\n"
+            "3. Güre Termal Resort: Güre'de termal suları olan lüks bir otel, 39.5871 N, 26.8828 E\n"
+            "4. Edremit Park Hotel: Edremit şehir merkezinde, 39.5944 N, 27.0239 E\n"
+            "5. Zeytinli Butik Otel: Zeytinli'de zeytin bahçeleri arasında, 39.5836 N, 26.9815 E\n"
+            
+            "SORGU SINIFLANDIRMA TÜRLERİ:\n"
+            "1. user-location → Kullanıcı kendi konumunu soruyorsa\n"
+            "   Örnek: 'Ben neredeyim?', 'Konumum nedir?', 'Şu an neredeyim?'\n\n"
+            
+            "2. defined-location → Bilinen bir yerin koordinatlarını soruyorsa\n"
+            "   Örnek: 'Edremit nerede?', 'İstanbul nerede?', 'Akçay', 'Kaz Dağları'\n"
+            "   NOT: Sadece yer ismi içeren sorgular da ('Akçay', 'Zeytinli' gibi) defined-location olarak değerlendirilmelidir.\n\n"
+            
+            "3. contextual-location → Bir yerin yakınındaki başka bir yeri soruyorsa\n"
+            "   Örnek: 'Edremit yakınında kafe', 'Akçay'da otel', 'Altınoluk'ta market', 'Sahilde restoran'\n\n"
+            
+            "4. food-location → Belirli bir yemek yiyebileceği bir yer arıyorsa\n"
+            "   Örnek: 'Edremit'te zeytinyağlı', 'Akçay'da balık', 'Altınoluk'ta kahvaltı', 'Güre'de akşam yemeği'\n\n"
+            
+            "5. landmark-search → Tanınmış bir yer işaretini soruyorsa\n"
+            "   Örnek: 'Kaz Dağları nerede?', 'Şahindere Kanyonu'na nasıl gidilir?', 'Hasanboğuldu hakkında bilgi'\n\n"
+            
+            "6. expanded-query → Karmaşık bir yer sorgusu yapıyorsa\n"
+            "   Örnek: 'Edremit'te çocuklarla gidilecek yerler', 'Akçay'da denize sıfır restoranlar', 'Altınoluk'ta kahvaltı ve plaj'\n\n"
+            
+            "SORGU ANALİZİ KURALLARI:\n"
+            "1. Her sorguyu analiz ederken, hem konum türünü hem de hizmet türünü MUTLAKA belirlemelisin.\n"
+            "2. 'Edremit' ismi nitelenmeden geçerse, varsayılan olarak Balıkesir ilindeki Edremit'i ifade ettiğini kabul et.\n"
+            "3. Sadece lokasyon ismi içeren sorgular ('Akçay', 'Altınoluk', 'Güre' gibi) defined-location olarak değerlendirilmelidir.\n"
+            "4. Belirsiz sorgularda action_type olarak 'defined-location' kullan ve location_name olarak 'edremit' belirle.\n"
+            "5. Action'ın gerektirdiği tüm alanları doldur - örneğin contextual-location için mutlaka location_name ve context alanlarını belirt.\n\n"
             
             "HİZMET TİPİNİ BELİRLEME KRİTERLERİ:\n"
-            "- foursquare_service: Sorguda 'foursquare', 'mekan', 'yer', 'kafe', 'cafe', 'restoran', 'restaurant', 'yeme', 'içme', 'market', 'mağaza', 'alışveriş' gibi kelimeler varsa\n"
-            "- maks_service: Sorguda 'maks', 'bina', 'yapı', 'ev', 'konut', 'daire', 'apartman', 'inşaat', 'mimari' gibi kelimeler varsa\n"
-            "- overpass_service: Sorguda 'overpass', 'yol', 'sokak', 'cadde', 'bulvar', 'highway', 'road', 'street', 'yön', 'navigasyon' gibi kelimeler varsa\n"
-            "- default_service: Yukardaki kelimelerden hiçbiri yoksa\n\n"
+            "- foursquare_service: En yaygın kullanılan servis! Şu tür sorgularda kullan:\n"
+            "  * Yeme-içme: 'mekan', 'yer', 'kafe', 'cafe', 'restoran', 'restaurant', 'yeme', 'içme', 'dondurma', 'kahvaltı', 'balık', 'yemek'\n"
+            "  * Konaklama: 'otel', 'hotel', 'pansiyon', 'konaklama', 'apart', 'motel'\n"
+            "  * Alışveriş: 'eczane', 'market', 'alışveriş', 'mağaza', 'süpermarket', 'bakkal'\n"
+            "  * Eğlence: 'bar', 'eğlence', 'gece kulübü', 'disko'\n"
+            "  * Hizmet: 'berber', 'kuaför', 'ATM', 'banka', 'postane'\n"
+            "  * Varsayılan: Emin değilsen foursquare_service kullan\n\n"
             
-            "JSON formatında dön:\n"
-            "{ \"action\": \"user-location\", \"service_type\": \"default_service\" }\n"
-            "veya\n"
-            "{ \"action\": \"defined-location\", \"location_name\": \"Edremit\", \"service_type\": \"foursquare_service\" }\n"
-            "veya\n"
-            "{ \"action\": \"contextual-location\", \"location_name\": \"kafe\", \"context\": \"Edremit\", \"service_type\": \"foursquare_service\" }\n"
-            "veya\n"
-            "{ \"action\": \"food-location\", \"food\": \"zeytinyağlı\", \"location\": \"Edremit\", \"service_type\": \"foursquare_service\" }\n"
-            "veya\n"
-            "{ \"action\": \"landmark\", \"name\": \"Kaz Dağları\", \"service_type\": \"default_service\" }\n"
-            "veya\n"
-            "{ \"action\": \"expanded-query\", \"query\": \"Edremit'te çocuklarla gidilebilecek yerler\", \"location\": \"Edremit\", \"service_type\": \"default_service\" }\n\n"
+            "- maks_service: Bina ve yapı ile ilgili sorgularda kullan:\n"
+            "  * Yapılar: 'bina', 'yapı', 'ev', 'konut', 'daire', 'apartman', 'inşaat', 'mimari'\n"
+            "  * Kurumlar: 'okul', 'lise', 'üniversite', 'hastane', 'resmi daire', 'belediye'\n\n"
             
-            "ÖRNEK DEĞERLENDİRMELER:\n"
-            "- 'Edremit'te güzel bir kafenin foursquare verilerini göster' → service_type: foursquare_service\n"
-            "- 'Akçay'daki binaları görmek istiyorum' → service_type: maks_service\n"
-            "- 'Kaz Dağları yakınındaki yolları göster' → service_type: overpass_service\n"
-            "- 'Edremit nerede?' → service_type: default_service\n\n"
+            "- overpass_service: Coğrafi özellikler ve yollarla ilgili sorgularda kullan:\n"
+            "  * Yollar: 'yol', 'sokak', 'cadde', 'bulvar', 'otoyol', 'navigasyon', 'köprü'\n"
+            "  * Doğal alanlar: 'plaj', 'sahil', 'kıyı', 'deniz', 'orman', 'dağ'\n"
+            "  * Parklar: 'park', 'bahçe', 'yeşil alan', 'milli park'\n\n"
             
-            "Sadece JSON döndür, açıklama yapma. Her sorguyu bağımsız olarak tam anlamıyla analiz et."
+            "- edremit_service: Spesifik Edremit lokasyonları için kullan:\n"
+            "  * Sorguda açıkça 'Edremit' bölgesinden bir lokasyon belirtiliyorsa\n"
+            "  * Bölgeye özgü landmark'lar için: 'Kaz Dağları', 'Hasanboğuldu', 'Şahindere'\n\n"
+            
+            "- default_service: Sadece şu durumlarda kullan:\n"
+            "  * Konum sorgusunun türünü belirleyemediğin durumlarda\n"
+            "  * Yukarıdaki hiçbir kategoriye uymuyorsa\n\n"
+            
+            "ÖNEMLİ: Eğer hizmet türünü belirleyemiyorsan, varsayılan olarak foursquare_service kullan.\n\n"
+            
+            "SORGU ÖRNEKLERİ VE BEKLENEN ÇIKTILAR:\n"
+            "1. 'Akçay'da otel' → {\"action\": \"contextual-location\", \"location_name\": \"otel\", \"context\": \"Akçay\", \"location_type\": \"hotel\", \"service_type\": \"foursquare_service\"}\n"
+            "2. 'Sahilde kahvaltı' → {\"action\": \"contextual-location\", \"location_name\": \"kahvaltı\", \"context\": \"sahil\", \"location_type\": \"restaurant\", \"service_type\": \"foursquare_service\"}\n"
+            "3. 'Lise yakınında dondurma' → {\"action\": \"contextual-location\", \"location_name\": \"dondurma\", \"context\": \"lise\", \"location_type\": \"ice cream\", \"service_type\": \"foursquare_service\"}\n"
+            "4. 'Edremit' → {\"action\": \"defined-location\", \"location_name\": \"edremit\", \"service_type\": \"edremit_service\"}\n"
+            "5. 'Otel' → {\"action\": \"defined-location\", \"location_name\": \"otel\", \"location_type\": \"hotel\", \"service_type\": \"foursquare_service\"}\n"
+            "6. 'Zeytinyağlı nerede yenir?' → {\"action\": \"food-location\", \"food\": \"zeytinyağlı\", \"location\": \"edremit\", \"service_type\": \"foursquare_service\"}\n"
+            
+            "Aşağıdaki fonksiyonu kullanarak sonuç döndür:\n"
         )
+        
+        # Define function schema for Turkish
+        function_schema = {
+            "name": "process_location_query",
+            "description": "Process a natural language location query about Edremit region and Turkey",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "enum": ["user-location", "defined-location", "contextual-location", "food-location", "landmark-search", "expanded-query"],
+                        "description": "The type of location query being made"
+                    },
+                    "location_name": {
+                        "type": "string",
+                        "description": "Primary location being searched for (e.g., 'cafe', 'restaurant', 'Edremit')"
+                    },
+                    "context": {
+                        "type": "string",
+                        "description": "Secondary location providing context (e.g., 'near Edremit')"
+                    },
+                    "location_type": {
+                        "type": "string",
+                        "description": "Type of location being searched for (e.g., 'school', 'beach', 'restaurant')"
+                    },
+                    "food": {
+                        "type": "string",
+                        "description": "Food type when searching for restaurants"
+                    },
+                    "landmark_name": {
+                        "type": "string",
+                        "description": "Name of landmark when searching for landmarks"
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "Full query for expanded searches"
+                    },
+                    "location": {
+                        "type": "string",
+                        "description": "Location context for expanded queries or food searches"
+                    },
+                    "service_type": {
+                        "type": "string",
+                        "enum": ["foursquare_service", "maks_service", "overpass_service", "edremit_service", "default_service"],
+                        "description": "Which service should handle this query based on content"
+                    }
+                },
+                "required": ["action", "service_type"]
+            }
+        }
+        return system_prompt, function_schema
     else:  # Default to English
-        return (
+        system_prompt = (
             "Your job is to thoroughly analyze and classify user prompts related to locations, landmarks and food. "
             "This system is SPECIFICALLY DESIGNED for EDREMIT, BALIKESIR in Turkey. Whenever Edremit is mentioned, assume it refers to Edremit in Balıkesir, Turkey. "
             "Edremit is a district of Balıkesir province located in western Turkey, on the Aegean Sea coast. It sits at the foot of Mount Ida (Kaz Dağları). "
-            "Important places in Edremit area: Edremit town center, Akçay, Zeytinli, Güre, Altınoluk settlements, Mount Ida National Park, Şahindere Canyon, Hasanboğuldu Waterfall, and thermal facilities. "
-            "Common food in Edremit: Olive oil (the region is famous for olive oil production), olive-based dishes, Aegean cuisine, fish and seafood, and herb-based dishes. "
+            
+            "DETAILED INFORMATION ABOUT EDREMIT REGION:\n"
+            "1. Settlements:\n"
+            "   - Edremit town center: Main center with shopping areas and businesses\n"
+            "   - Akçay: Popular beach town, lively in summer, has beaches for swimming\n"
+            "   - Zeytinli: Small and quiet settlement surrounded by olive trees\n"
+            "   - Güre: Famous for thermal facilities, visited for health tourism\n"
+            "   - Altınoluk: Beach town known for clean sea and calm atmosphere\n"
+            "   - Kızılkeçili: Mountainous village, suitable for nature hikes\n"
+            
+            "2. Important Tourist Attractions:\n"
+            "   - Mount Ida National Park: Nature wonder with rich flora and fauna\n"
+            "   - Hasanboğuldu Waterfall: Natural beauty subject of legends\n"
+            "   - Sırtçamçam Waterfall: Waterfall accessible by a short hike\n"
+            "   - Zeytinli Ethnography Museum: Museum preserving local history and culture\n"
+            "   - Sıkrıbuğaz Canyon: Ideal route for nature enthusiasts\n"
+            "   - Edremit Gulf: Gulf famous for its stunning views\n"
+            
+            "3. Educational Institutions:\n"
+            "   - Edremit Anatolian High School: Well-established school in town center\n"
+            "   - 10 Kasım Vocational High School: School providing vocational education\n"
+            "   - Edremit Science High School: Elite high school known for academic success\n"
+            "   - Edremit Primary School: Basic education institution in town center\n"
+            "   - Altınoluk Primary School: School in Altınoluk town\n"
+            
+            "4. Dining Spots:\n"
+            "   - Akçay Promenade: Many cafes and restaurants line the seaside, especially popular for breakfast\n"
+            "   - Edremit Bazaar: Traditional restaurants offering local flavors\n"
+            "   - Altınoluk Marina: Ideal for fish restaurants and seafood\n"
+            "   - Küçükkuyu Beach: Famous for its cafes and ice cream shops\n"
+            "   - Zeytinli Village Breakfasts: Village breakfasts prepared with organic products\n"
+            
+            "5. Shopping and Market Points:\n"
+            "   - Novada Mall: Largest shopping center in Edremit\n"
+            "   - Körfez Mall: Shopping center with various stores\n"
+            "   - Edremit Marketplace: Large local market set up on Tuesdays\n"
+            "   - Akçay Bazaar: Shops selling souvenirs and local products\n"
+            
             "Consider the complete context within each query. You must always return valid JSON.\n\n"
             
             "SERVICE TYPES:\n"
@@ -151,3 +357,6 @@ def get_system_prompt(language: str = "tr") -> str:
             
             "Only respond with JSON. Do not explain anything. Analyze each query thoroughly and independently."
         )
+        
+        # English doesn't use function calling in this implementation
+        return system_prompt, None

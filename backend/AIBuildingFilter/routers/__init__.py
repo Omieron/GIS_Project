@@ -1,0 +1,1 @@
+# AIBuildingFilter routers initialization

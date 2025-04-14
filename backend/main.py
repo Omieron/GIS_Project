@@ -6,6 +6,9 @@ from maks.bina import router as bina_router
 # Import AILocationService router
 from AILocationService.routers.location_router import router as location_router
 
+# Import AIBuildingFilter router
+from AIBuildingFilter.routers.filter_router import router as filter_router
+
 app = FastAPI(
     title="Benim API'm",
     description="Bu API hakkında açıklama",
@@ -25,6 +28,9 @@ app.include_router(bina_router, prefix="/maks")
 
 # Include AILocationService router - note that location_router already has prefix='/api'
 app.include_router(location_router)
+
+# Include AIBuildingFilter router
+app.include_router(filter_router, prefix="/ai-filter")
 
 @app.get("/")
 def read_root():
@@ -54,6 +60,10 @@ def read_root():
             {
                 "path": "/api/enhanced-location/",
                 "description": "Geliştirilmiş konum sorguları için API (POST)"
+            },
+            {
+                "path": "/ai-filter/filter/",
+                "description": "Doğal dil ile bina filtresi için API (POST)"
             }
         ]
     }
