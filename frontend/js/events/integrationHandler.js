@@ -12,6 +12,8 @@ import { fetchBuildingHandler } from '../services/maksService.js';
 import { bindFoursquareEvents } from './foursquareHandler.js';
 import { displayLocationOnMap } from './aiLocationHandler.js';
 
+import { simulateCircleCreation } from '../ai_chat/aiUserInterfaceControl.js';
+
 // Keywords for detection in prompts
 const KEYWORD_MAPPING = {
   foursquare: ['foursquare', 'fsq', 'yeme', 'içme', 'kafe', 'restoran', 'mekan', 'yer', 'cafe', 'restaurant', 'dondurma', 'kahvaltı', 'balık'],
@@ -37,6 +39,7 @@ const EDREMIT_LOCATION_TYPES = {
  * @param {function} appendMessage - Function to append messages to chat
  */
 export async function processIntegratedQuery(query, map, appendMessage) {
+
   return new Promise(async (resolve, reject) => {
     let responseText = '<div class="ai-response">';
     
@@ -142,6 +145,7 @@ export async function processIntegratedQuery(query, map, appendMessage) {
         <strong>${getServiceTitle(serviceType)}</strong> verilerini yüklüyorum...
       </div>`;
       
+
       appendMessage('ai', responseText);
       
       resolve(locationResponse);
@@ -150,7 +154,9 @@ export async function processIntegratedQuery(query, map, appendMessage) {
       appendMessage('ai', `Üzgünüm, bir hata oluştu: ${error.message}`);
       reject(error);
     }
+
   });
+
 }
 
 /**
@@ -213,6 +219,7 @@ function detectServiceType(query) {
 /**
  * Create a draggable circle for service integration
  */
+
 function createServiceCircle(map, coords, serviceType, location) {
   // First trigger a custom event to close any existing cards
   document.dispatchEvent(new CustomEvent('circle:close-all'));
@@ -425,18 +432,19 @@ function formatLocationResponse(response) {
       ${sourceInfo}
     </div>`;
   }
-  
+
   // Multiple results
   if (response.results && Array.isArray(response.results)) {
     if (response.results.length === 0) {
       return '<div class="warning-message">Belirtilen kriterlere uygun sonuç bulunamadı.</div>';
     }
-    
+
     let resultsHtml = `<div class="location-results">
       <strong>${response.results.length} sonuç bulundu:</strong><br>
       <ul class="results-list">`;
-    
+
     response.results.forEach((result, index) => {
+
       let name = result.name || `Sonuç ${index+1}`;
       
       // Check for Edremit-specific location types
@@ -455,11 +463,12 @@ function formatLocationResponse(response) {
       let description = result.description ? ` - ${result.description}` : '';
       
       resultsHtml += `<li>${name}${category}${description}</li>`;
+
     });
-    
+
     resultsHtml += '</ul></div>';
     return resultsHtml;
   }
-  
+
   return '<div class="info-message">Konum bilgisi işlendi.</div>';
 }
