@@ -113,6 +113,7 @@ let placesCache = {}; // Structure: { circleId: { category: [...places] } }
 let activeMarkerLayer = [];
 let currentCircleId = null;
 let circleMoveTimeout = null;
+let previousCircleLocation = null; // Track the previous circle location
 
 export function bindFoursquareEvents(map) {
   // Listen for circle creation - this is triggered by the bindUIEvents function
@@ -121,10 +122,27 @@ export function bindFoursquareEvents(map) {
     if (type !== 'foursquare') return;
 
     console.log("🟢 Foursquare çemberi oluşturuldu, panel açılıyor...");
-    currentCircleId = id || 'foursquare';
     
-    // Reset cache for this new circle
-    placesCache[currentCircleId] = {};
+    // Check if we already have a circle ID and if it's different or location changed
+    const newCenter = marker.getLngLat();
+    const newLocation = `${newCenter.lng},${newCenter.lat}`;
+    
+    // If we have a previous location and it's different from the current one,
+    // or if we're creating a new circle with a different ID, clear the cache
+    if ((previousCircleLocation && previousCircleLocation !== newLocation) || 
+        (currentCircleId && currentCircleId !== id)) {
+      console.log("🧹 Yeni konum veya farklı çember, önbellek temizleniyor...");
+      clearCache(id || 'foursquare');
+    }
+    
+    // Update tracking variables
+    currentCircleId = id || 'foursquare';
+    previousCircleLocation = newLocation;
+    
+    // Make sure there's a cache entry for this circle
+    if (!placesCache[currentCircleId]) {
+      placesCache[currentCircleId] = {};
+    }
     
     // Set up the dragend event handler directly from the marker
     marker.on('dragend', () => {
@@ -139,7 +157,10 @@ export function bindFoursquareEvents(map) {
         console.log("🔄 Çember taşındı, yeni konuma göre veri güncelleniyor...");
         
         // Reset cache for this circle
-        placesCache[currentCircleId] = {}; 
+        clearCache(currentCircleId);
+        
+        // Update the previous location
+        previousCircleLocation = `${newCenter.lng},${newCenter.lat}`;
         
         // Refresh the markers based on current selection
         updateFoursquareMarkers(map, marker);
@@ -151,7 +172,34 @@ export function bindFoursquareEvents(map) {
 
     // HTML elemanlarına event listener ekle
     setupExistingCheckboxes(card, map, marker);
+    
+    // Also update markers when a circle is created/activated
+    updateFoursquareMarkers(map, marker);
   });
+  
+  // Listen for circle closing events if available
+  window.addEventListener('circle:closed', (e) => {
+    const { type, id } = e.detail;
+    if (type !== 'foursquare') return;
+    
+    console.log("🔴 Foursquare çemberi kapatıldı...");
+    clearFoursquareMarkers();
+    
+    // Clear the cache for this circle
+    if (id) {
+      clearCache(id);
+    }
+    
+    // Reset tracking variables
+    currentCircleId = null;
+    previousCircleLocation = null;
+  });
+}
+
+// Helper function to clear cache for a specific circle
+function clearCache(circleId) {
+  console.log(`🧹 ${circleId} için önbellek temizleniyor...`);
+  placesCache[circleId] = {};
 }
 
 function setupExistingCheckboxes(card, map, marker) {
