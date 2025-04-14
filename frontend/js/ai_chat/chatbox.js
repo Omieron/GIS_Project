@@ -60,6 +60,7 @@ function initChatBox() {
       sendBtn.click();
     }
   });
+  
 }
 
 // Global function to handle location queries
@@ -306,7 +307,7 @@ function appendMessage(role, text) {
   container.scrollTop = container.scrollHeight;
 }
 
-function enableChatboxPin() {
+export function enableChatboxPin() {
   const wrapper = document.getElementById('chatbox-wrapper');
   const pinButton = document.getElementById('pin-toggle');
 

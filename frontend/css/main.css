@@ -1,6 +1,6 @@
 /* 
-* Combined CSS File
-* Merges: main-page.css, sag-katman.css, sol-katman.css
+* Complete CSS File
+* Merges all styles with fixes
 */
 
 /* ===============================================
@@ -17,8 +17,8 @@
   }
   
   /* ===============================================
-       MAP STYLING
-       =============================================== */
+     MAP STYLING
+     =============================================== */
   #map {
     position: absolute;
     top: 0;
@@ -27,13 +27,11 @@
   }
   
   /* ===============================================
-       BAŞLANGIÇ TUŞU
-       =============================================== */
-  
+     BAŞLANGIÇ TUŞU
+     =============================================== */
   .start-button {
     position: absolute;
     bottom: 40px;
-    /* ← daha aşağıya kayar (eskisi belki 20px'ti) */
     left: 50%;
     transform: translateX(-50%);
     padding: 12px 24px;
@@ -74,8 +72,8 @@
   }
   
   /* ===============================================
-       LEFT MENU / CONTROL MENU
-       =============================================== */
+     LEFT MENU / CONTROL MENU
+     =============================================== */
   .control-menu {
     position: absolute;
     top: 16px;
@@ -177,7 +175,7 @@
   }
   
   /* ===============================================
-       BİLGİ PANELİ - SAĞDAKİ YAPI (Sadece yazı döndürülmüş)
+     BİLGİ PANELİ - SAĞDAKİ YAPI (Sadece yazı döndürülmüş)
   =============================================== */
   .info-hover-tab {
     position: fixed;
@@ -187,15 +185,13 @@
     z-index: 1000;
     display: flex;
     font-family: sans-serif;
-    /* Panel tamamen ekran dışında kalacak şekilde */
-    transform: translateX(calc(100% - 36px)); /* Bilgi etiketinin genişliği kadar fark bırak */
+    transform: translateX(calc(100% - 36px));
     transition: transform 0.3s ease;
   }
   
-  /* Bilgi kutusu (dikey) */
   .info-hover-tab .info-label {
-    writing-mode: vertical-rl; /* Dikey yazı modu korunuyor */
-    transform: rotate(180deg); /* 180 derece döndürme - saat yönünün tersine dikey yazı */
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
     background: #4CAF50;
     color: white;
     padding: 16px 10px;
@@ -212,7 +208,6 @@
     border-color: #555;
   }
   
-  /* Bilgi kartı - bilgi kutucuğunun sağına yapışık */
   .info-hover-tab .info-panel {
     background: white;
     border: 1px solid #ccc;
@@ -220,15 +215,11 @@
     padding: 16px;
     width: 200px;
     min-height: 170px;
-  
-    /* 🔥 Yeni eklenenler */
-    max-height: 170px;        /* Yüksekliği sınırlıyoruz */
-    overflow-y: auto;         /* Uzarsa scroll çıksın */
-  
+    max-height: 170px;
+    overflow-y: auto;
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
   }
-  
   
   body.dark-mode .info-panel {
     background-color: #1e1e1e;
@@ -237,12 +228,10 @@
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
   }
   
-  /* Hover ile sola kaydırma (beyaz kartın görünür olması için) */
   .info-hover-tab:hover {
     transform: translateX(0);
   }
   
-  /* İçerik listesi */
   #kat-istatistik {
     list-style: none;
     padding-left: 0;
@@ -254,17 +243,15 @@
     font-size: 14px;
   }
   
-  
   /* ===============================================
-       INFO CARD (LEFT BOTTOM)
-       =============================================== */
+     INFO CARD (LEFT BOTTOM)
+     =============================================== */
   .info-card {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 320px;
     height: 400px;
-    /* Sabit yükseklik eklendi */
     background: white;
     border-top-right-radius: 12px;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
@@ -275,7 +262,6 @@
     border-top: 1px solid #ccc;
     border-right: 1px solid #ccc;
     overflow: hidden;
-    /* dış taşmaları önler */
   }
   
   body.dark-mode .info-card {
@@ -376,9 +362,7 @@
     padding: 12px;
     min-height: 80px;
     overflow-y: auto;
-    /* scroll bar göster */
     flex: 1;
-    /* tüm kalan alanı kapla */
   }
   
   body.dark-mode .tab-content {
@@ -387,7 +371,6 @@
   
   .tab-panel {
     display: block;
-    /* display:none yerine height + opacity ile görünürlük kontrolü */
     max-height: 0;
     opacity: 0;
     overflow: hidden;
@@ -404,9 +387,8 @@
   }
   
   /* ===============================================
-       OVERPASS PANELİ
-       =============================================== */
-  
+     OVERPASS PANELİ
+     =============================================== */
   #overpass-tab {
     font-family: 'Segoe UI', sans-serif;
     font-size: 14px;
@@ -472,15 +454,13 @@
     box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.1);
   }
   
-  
   /* ===============================================
-       RIGHT SETTINGS PANEL
-       =============================================== */
+     RIGHT SETTINGS PANEL
+     =============================================== */
   .settings-wrapper {
     position: absolute;
     top: 10px;
     right: 50px;
-    /* Bilerek sağdan biraz içeride */
     z-index: 9999;
     display: flex;
     flex-direction: column;
@@ -516,7 +496,6 @@
     transition: transform 0.3s ease;
   }
   
-  /* 🔁 Hover sırasında sadece img döner */
   .settings-icon:hover img {
     transform: rotate(90deg);
   }
@@ -530,15 +509,11 @@
     border-radius: 8px;
     padding: 12px;
     width: 200px;
-  
     display: none;
     flex-direction: column;
     gap: 10px;
-  
     border: 1px solid #ddd;
-    box-shadow:
-      0 2px 6px rgba(0, 0, 0, 0.08);
-  
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     font-family: 'Segoe UI', sans-serif;
     font-size: 13px;
     transition: all 0.2s ease;
@@ -561,22 +536,18 @@
       opacity: 0;
       transform: translateY(-5px);
     }
-  
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
   
-  /* Başlık (strong) altına çizgi */
   .settings-card strong {
     display: block;
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 4px;
-    /* Eskiden 8px'ti, azaltıldı */
     padding-bottom: 4px;
-    /* Eskiden 6px'ti */
     border-bottom: 1px solid #ccc;
     color: #333;
   }
@@ -586,21 +557,18 @@
     color: #f0f0f0;
   }
   
-  /* Her satır için hizalama */
   .settings-card .switch-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 4px;
-    /* Eskiden 8px veya 6px olabilir, azaltıldı */
     margin-bottom: 4px;
-    /* Ekstra alt boşluk için */
     font-size: 14px;
   }
   
   /* ===============================================
-       TOGGLE SWITCH (Common component)
-       =============================================== */
+     TOGGLE SWITCH (Common component)
+     =============================================== */
   .switch {
     position: relative;
     display: inline-block;
@@ -655,8 +623,8 @@
   }
   
   /* ===============================================
-       SWITCH ROW LAYOUT
-       =============================================== */
+     SWITCH ROW LAYOUT
+     =============================================== */
   .switch-row,
   .fsq-switch-row {
     display: flex;
@@ -668,8 +636,8 @@
   }
   
   /* ===============================================
-       FSQ SLIDER
-       =============================================== */
+     FSQ SLIDER
+     =============================================== */
   .fsq-left {
     width: 250px;
     padding: 15px;
@@ -682,8 +650,8 @@
   }
   
   /* ===============================================
-       CHATBOX / AI CHAT
-       =============================================== */
+     CHATBOX / AI CHAT
+     =============================================== */
   .chatbox-wrapper {
     position: absolute;
     bottom: 0;
@@ -846,8 +814,8 @@
   }
   
   /* ===============================================
-       AI CHAT ENHANCEMENTS
-       =============================================== */
+     AI CHAT ENHANCEMENTS
+     =============================================== */
   .chatbox-message.loading {
     background-color: rgba(200, 200, 200, 0.3);
     color: #555;
@@ -876,13 +844,13 @@
   .ai-marker:hover {
     transform: scale(1.2);
   }
-
+  
   /* ===============================================
-       RECORD BUTTON
-       =============================================== */
+     RECORD BUTTON
+     =============================================== */
   .record-btn {
-    background: transparent;
-    border: none;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
     cursor: pointer;
     padding: 0;
     margin-left: 6px;
@@ -893,7 +861,20 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: background-color 0.3s ease;
+    transition: all 0.2s ease;
+  }
+  
+  body.dark-mode .record-btn {
+    background-color: #333;
+    border: 1px solid #444;
+  }
+  
+  .record-btn:hover {
+    background-color: #e8e8e8;
+  }
+  
+  body.dark-mode .record-btn:hover {
+    background-color: #444;
   }
   
   .record-btn img {
@@ -918,10 +899,8 @@
   }
   
   /* ===============================================
-       BİNA FİLTRELERİ
-  =============================================== */
-  
-  /* Bina filtre kartı */
+     BİNA FİLTRELERİ
+     =============================================== */
   #bina-card {
     padding: 8px;
     background: white;
@@ -930,9 +909,7 @@
     gap: 10px;
     font-size: 14px;
     width: 90%;
-    /* genişlik belirleyerek */
     max-width: 280px;
-    /* taşma önlemesi için */
     margin: 0 auto;
   }
   
@@ -941,7 +918,6 @@
     color: #f0f0f0;
   }
   
-  /* Her filtre satırı */
   #bina-card .switch-row {
     display: flex;
     justify-content: space-between;
@@ -949,7 +925,6 @@
     gap: 8px;
   }
   
-  /* Seçim kutuları */
   #bina-card select,
   #bina-card .filter-select {
     padding: 8px 12px;
@@ -988,13 +963,11 @@
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
   }
   
-  /* Başlıklar */
   #bina-card span {
     flex: 1;
     font-weight: 500;
   }
   
-  /* Filtre uygulama butonu */
   #apply-filters-btn {
     margin-top: 8px;
     padding: 8px;
@@ -1020,3 +993,192 @@
   body.dark-mode #apply-filters-btn:hover {
     background-color: #2e7031;
   }
+  
+  /* ===============================================
+     AI MODE SELECTOR FIX
+     =============================================== */
+  .ai-mode-selector {
+    margin-left: 16px;
+    font-size: 12px;
+  }
+  
+  .ai-mode-selector .switch-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    gap: 6px;
+  }
+  
+  .ai-mode-selector .switch {
+    width: 36px;
+    height: 18px;
+  }
+  
+  .ai-mode-selector .slider::before {
+    height: 12px;
+    width: 12px;
+  }
+  
+  .ai-mode-selector input:checked + .slider::before {
+    transform: translateX(18px);
+  }
+  
+  /* ===============================================
+     FSQ SPLIT CONTAINER IMPROVEMENTS
+     =============================================== */
+  .fsq-split-container {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+  }
+  
+  body.dark-mode .fsq-split-container {
+    color: #f0f0f0;
+  }
+  
+  body.dark-mode .fsq-left {
+    background-color: #1e1e1e;
+    border-color: #444;
+  }
+  
+  /* ===============================================
+     DEPREM FILTER WRAPPER TRANSITION
+     =============================================== */
+  #deprem-filter-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+    margin-top: 0;
+  }
+  
+  #deprem-filter-wrapper.active {
+    max-height: 100px;
+    opacity: 1;
+    margin-top: 10px;
+  }
+  
+  /* ===============================================
+     MODAL RESPONSIVE IMPROVEMENTS
+     =============================================== */
+  @media (max-width: 768px) {
+    .chatbox-wrapper {
+      width: 90%;
+      right: 5%;
+      max-width: 400px;
+    }
+    
+    .info-card {
+      width: 90%;
+      max-width: 320px;
+    }
+    
+    .settings-wrapper {
+      right: 16px;
+    }
+  }
+  
+  /* ===============================================
+     DARK MODE ADDITIONAL FIXES
+     =============================================== */
+  body.dark-mode #chat-input::placeholder {
+    color: #aaa;
+  }
+  
+  body.dark-mode .ai-mode-selector {
+    color: #f0f0f0;
+  }
+  
+  /* Fixing the Foursquare toggle switches */
+  body.dark-mode #foursquare-card .switch-row span {
+    color: #f0f0f0;
+  }
+  
+  /* ===============================================
+     CONSISTENCY IMPROVEMENTS
+     =============================================== */
+  #fsq-container strong,
+  #bina-card strong,
+  .settings-card strong {
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+  }
+  
+  /* Ensure all buttons have same hover effect */
+  .menu-button:hover,
+  #chat-send:hover,
+  #apply-filters-btn:hover {
+    filter: brightness(0.9);
+  }
+  
+  /* Ensure chatbox pin button has proper styling */
+  .chatbox-pin {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  
+  .chatbox-pin:hover {
+    opacity: 1;
+  }
+  
+  .chatbox-wrapper.pinned .chatbox-pin {
+    opacity: 1;
+    transform: rotate(-45deg);
+  }
+
+  /* ===============================================
+   AI MODE SELECTOR IMPROVEMENTS
+   =============================================== */
+.ai-mode-selector {
+  margin-left: 16px;
+  font-size: 12px;
+}
+
+.ai-mode-selector .switch-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  gap: 6px;
+}
+
+.ai-mode-selector .switch {
+  width: 36px;
+  height: 18px;
+}
+
+.ai-mode-selector .slider {
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.ai-mode-selector .slider::before {
+  height: 12px;
+  width: 12px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.ai-mode-selector input:checked + .slider {
+  background-color: #ffeb3b; /* Sarı renk - arkaplan üstünde görünür */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+body.dark-mode .ai-mode-selector input:checked + .slider {
+  background-color: #ffeb3b; /* Koyu mod için de aynı sarı renk */
+}
+
+.ai-mode-selector input:checked + .slider::before {
+  transform: translateX(18px);
+}
+
+/* Metin renkleri için */
+.ai-mode-selector span {
+  color: white;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  font-weight: 500;
+}
+
+body.dark-mode .ai-mode-selector span {
+  color: #f0f0f0;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}

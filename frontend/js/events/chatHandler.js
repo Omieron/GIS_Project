@@ -4,6 +4,8 @@
 
 import { processIntegratedQuery } from './integrationHandler.js';
 import { processFilterQuery, applyBuildingFilters } from '../services/aiBuildingFilterService.js';
+import { enableChatboxPin } from '../ai_chat/chatbox.js';
+import { enableSpeechToText } from '../ai_chat/speechToText.js';
 
 // Chat DOM elements
 let chatInput;
@@ -52,8 +54,9 @@ export function initChatHandler(mapObj) {
   modeToggle.addEventListener('change', switchAIMode);
   
   // Set initial UI state based on default mode (location mode)
-  document.querySelector('.chatbox-header').style.background = '#2196F3';
-  
+  //document.querySelector('.chatbox-header').style.background = '#2196F3';
+  enableChatboxPin();
+  enableSpeechToText();
   console.log('🤖 Chat handler initialized');
 }
 
@@ -80,7 +83,7 @@ function switchAIMode() {
   // Update UI based on mode
   if (isFilterMode) {
     // Building Filter Mode - Orange color
-    chatHeader.style.background = '#FF9800';
+    //chatHeader.style.background = '#FF9800';
     chatInput.placeholder = 'Bina filtreleri için doğal dil sorgusu yazın...';
     console.log('🔄 Switched to Building Filter mode');
     
@@ -89,7 +92,7 @@ function switchAIMode() {
     filterLabel.classList.add('active');
   } else {
     // Location Mode - Blue color
-    chatHeader.style.background = '#2196F3';
+    //chatHeader.style.background = '#2196F3';
     chatInput.placeholder = 'Konum sorgusu yazın...';
     console.log('🔄 Switched to Location Search mode');
     
