@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 from database.database import get_db
+from maks.deprem_risk import hesapla_deprem_riski  # doğru import
+import json  # GEOJSON dönüşümü için gerekli
 
 router = APIRouter()
 
@@ -13,31 +15,60 @@ async def get_buildings_within_radius(
     db: Session = Depends(get_db)
 ):
     try:
+        # SQL sorgusu (veri + geojson string + properties)
         query = text("""
-        SELECT jsonb_build_object(
-            'type', 'FeatureCollection',
-            'features', COALESCE(jsonb_agg(feature), '[]'::jsonb)
-        ) AS geojson
-        FROM (
-            SELECT jsonb_build_object(
-                'type', 'Feature',
-                'geometry', ST_AsGeoJSON(ST_Transform(geom, 4326))::jsonb,
-                'properties', to_jsonb(row) - 'geom'
-            ) AS feature
-            FROM (
-                SELECT * FROM "YAPI"
-                WHERE ST_DWithin(
-                    ST_Transform(geom, 4326)::geography,
-                    ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography,
-                    :radius
-                )
-            ) row
-        ) features;
+            SELECT
+                ST_AsGeoJSON(ST_Transform(geom, 4326)) AS geometry,
+                to_jsonb("YAPI") - 'geom' AS properties
+            FROM "YAPI"
+            WHERE ST_DWithin(
+                ST_Transform(geom, 4326)::geography,
+                ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography,
+                :radius
+            )
         """)
-        result = db.execute(query, {"lon": lon, "lat": lat, "radius": radius}).fetchone()
-        if result and result[0]:
-            return result[0]
-        else:
-            raise HTTPException(status_code=404, detail="Bina bulunamadı.")
+
+        print(f"📍 Sorgu başlatıldı: lon={lon}, lat={lat}, radius={radius}")
+        rows = db.execute(query, {"lon": lon, "lat": lat, "radius": radius}).fetchall()
+        print(f"📄 Toplam satır sayısı: {len(rows)}")
+
+        features = []
+
+        for row in rows:
+            try:
+                geometry_str = row[0]  # Tuple olduğu için indeksle erişiyoruz
+                raw_props = row[1]
+
+                if not geometry_str or not raw_props:
+                    print("⚠️ Boş satır atlandı.")
+                    continue
+
+                geometry = json.loads(geometry_str)
+                properties = dict(raw_props)
+
+                # Risk skoru ekle
+                try:
+                    properties["RISKSKORU"] = hesapla_deprem_riski(properties)
+                except Exception as e:
+                    print("⚠️ Risk hesaplama hatası:", e)
+                    properties["RISKSKORU"] = None
+
+                features.append({
+                    "type": "Feature",
+                    "geometry": geometry,
+                    "properties": properties
+                })
+
+            except Exception as row_err:
+                print("❌ Satır işleme hatası:", row_err)
+                continue
+
+        return {
+            "type": "FeatureCollection",
+            "features": features
+        }
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Hata: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"🔥 Genel hata: {str(e)}")

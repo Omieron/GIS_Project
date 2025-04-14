@@ -95,7 +95,8 @@
 
           <!-- Sol: kategori seçimleri -->
           <div class="fsq-left" id="foursquare-card">
-            <strong>Foursquare Kategorileri</strong><<br/>>
+            <strong>Foursquare Kategorileri</strong>
+            <<br />>
 
             <!-- Tümünü Seç Toggle -->
             <label class="switch-row">
@@ -165,7 +166,7 @@
       </div>
 
       <div id="overpass-tab" class="tab-panel">
-        <strong>Görünen Yol Tipleri</strong><br />
+        <strong>Görünen Yol Tipleri</strong>
 
         <div class="legend-item" data-type="motorway">
           <span class="color-box" style="background-color:#ff0000;"></span> Motorway
@@ -265,6 +266,31 @@
               <option value="D">D</option>
             </select>
           </label>
+
+          <label class="switch-row">
+            <span>Deprem Riski</span>
+            <label class="switch">
+              <input type="checkbox" id="deprem-toggle">
+              <span class="slider"></span>
+            </label>
+          </label>
+
+          <div id="deprem-filter-wrapper" style="display: none; margin-top: 5px;">
+            <label class="switch-row">
+              <span>Deprem Riski Ölçeği</span>
+              <select data-filter="deprem_riski">
+                <option value="">Tümü</option>
+                <option value="1">Çok Düşük Risk</option>
+                <option value="2">Düşük Risk</option>
+                <option value="3">Orta Risk</option>
+                <option value="4">Yüksek Risk</option>
+                <option value="5">Çok Yüksek Risk</option>
+              </select>
+            </label>
+          </div>
+
+
+
           <button id="apply-filters-btn" class="menu-button">Filtreleri Uygula</button>
 
         </div>

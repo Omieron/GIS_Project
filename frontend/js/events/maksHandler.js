@@ -1,8 +1,15 @@
+import { updateLayerColorByRisk } from '../services/maksService.js'
+
 export function initBuildingFilters(map) {
+  // ✅ Toggle olayını sayfa yüklenince aktif et
+  checkDepremToggle(map);
+
+  // ✅ Filtre butonu
   document.getElementById('apply-filters-btn')?.addEventListener('click', () => {
     applyBuildingFilters(map);
   });
 }
+
 
 export function applyBuildingFilters(map) {
   const source = map.getSource('building-source');
@@ -32,10 +39,13 @@ export function applyBuildingFilters(map) {
     const sera = document.querySelector('[data-filter="seragazi"]').value;
     if (sera && String(p.SERAGAZEMISYONSINIF ?? '') !== sera) ok = false;
 
+    const deprem_riski_toggle = document.getElementById('deprem-toggle')?.checked;
+    const deprem_riski = document.querySelector('[data-filter="deprem_riski"]')?.value;
+    if (deprem_riski_toggle && deprem_riski && String(p.RISKSKORU ?? '') !== deprem_riski) ok = false;
+
     return ok;
   });
 
-  console.log("🎯 Örnek özellikler:", allFeatures[0]?.properties);
   const filteredGeoJSON = {
     type: "FeatureCollection",
     features: filtered
@@ -45,7 +55,6 @@ export function applyBuildingFilters(map) {
   console.log(`✅ ${filtered.length} bina filtrelendi.`);
 
   updateBinaList(filtered);
-
 }
 
 function updateBinaList(filtered) {
@@ -69,3 +78,50 @@ function updateBinaList(filtered) {
       .join('');
   }
 }
+
+function checkDepremToggle(map) {
+  const toggle = document.getElementById('deprem-toggle');
+  const filterWrapper = document.getElementById('deprem-filter-wrapper');
+
+  if (!toggle || !filterWrapper) {
+    console.warn("❗ Toggle ya da filterWrapper bulunamadı.");
+    return;
+  }
+
+  // ✅ Sayfa ilk açıldığında toggle kapalıysa dropdown gizli başlasın
+  filterWrapper.style.display = toggle.checked ? 'block' : 'none';
+
+  toggle.addEventListener('change', () => {
+    const isActive = toggle.checked;
+
+    filterWrapper.style.display = isActive ? 'block' : 'none';
+
+    // Toggle kapandıysa dropdown'u sıfırla
+    const riskFilter = document.querySelector('[data-filter="deprem_riski"]');
+    if (riskFilter) riskFilter.selectedIndex = 0;
+
+    // Renk güncellemesi (kat rengine mi risk rengine mi geçilecek)
+    updateLayerColorByRisk(map);
+  });
+}
+
+export function resetAllBuildingFilters(map) {
+  const filters = document.querySelectorAll('#bina-tab [data-filter]');
+  filters.forEach(el => {
+    if (el.tagName === 'SELECT') {
+      el.selectedIndex = 0;
+    } else if (el.type === 'checkbox') {
+      el.checked = false;
+    }
+
+    const depremToggle = document.getElementById('deprem-toggle');
+    if (depremToggle) depremToggle.checked = false;
+
+    // 👇 wrapper'ı da gizle, seçimi sıfırla
+    document.getElementById('deprem-filter-wrapper').style.display = 'none';
+
+  });
+
+  resetDepremFilterUI(map); // özel deprem filtresi de sıfırlansın
+}
+
