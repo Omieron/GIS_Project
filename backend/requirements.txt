@@ -1,4 +1,12 @@
 fastapi
-uvicorn
+uvicorn[standard]
 sqlalchemy
 psycopg2-binary
+openai
+geopy
+python-dotenv
+requests
+python-jose[cryptography]
+passlib[bcrypt]
+foursquare
+overpy

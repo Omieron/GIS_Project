@@ -846,6 +846,38 @@
   }
   
   /* ===============================================
+       AI CHAT ENHANCEMENTS
+       =============================================== */
+  .chatbox-message.loading {
+    background-color: rgba(200, 200, 200, 0.3);
+    color: #555;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  
+  body.dark-mode .chatbox-message.loading {
+    background-color: rgba(80, 80, 80, 0.3);
+    color: #aaa;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
+  
+  .ai-marker {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .ai-marker:hover {
+    transform: scale(1.2);
+  }
+
+  /* ===============================================
        RECORD BUTTON
        =============================================== */
   .record-btn {
