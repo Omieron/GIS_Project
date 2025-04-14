@@ -51,19 +51,19 @@ def hesapla_deprem_riski(row):
     puan = 0
     puan += puanla_bina_yasi(row.get("BINAYASI"))
     puan += puanla_kat_sayisi(row.get("ZEMINUSTUKATSAYISI"))
-    puan += puanla_tasiyici_sistem(row.get("TASIYICISISTEM"))
+    #puan += puanla_tasiyici_sistem(row.get("TASIYICISISTEM"))
     puan += puanla_yapi_kayit_belgesi(row.get("YAPIKAYITBELGENO"))
     puan += puanla_yukseklik(row.get("TOPLAMYUKSEKLIK"))
     puan += puanla_tespit_aciklama(row.get("TESPITKARARACIKLAMA"))
 
     # Sonuç aralığını belirle
-    if puan <= 3:
+    if puan <= 2:
         return 1  # Çok Düşük Risk
-    elif puan <= 6:
+    elif puan <= 5:
         return 2  # Düşük Risk
-    elif puan <= 9:
+    elif puan <= 8:
         return 3  # Orta Risk
-    elif puan <= 12:
+    elif puan <= 11:
         return 4  # Yüksek Risk
     else:
         return 5  # Çok Yüksek Risk
