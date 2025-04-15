@@ -30,6 +30,12 @@ export async function processFilterQuery(query) {
     
     const data = await response.json();
     console.log(`✅ Filter parameters extracted: `, data);
+    
+    // Log SQL query if present
+    if (data.sql_query) {
+      console.log(`🔄 SQL sorgusu: ${data.sql_query}`);
+    }
+    
     return data;
   } catch (error) {
     console.error(`❌ Error in AI building filter service: ${error.message}`);

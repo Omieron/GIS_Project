@@ -31,6 +31,9 @@ class BuildingFilterResponse(BaseModel):
     deprem_riski: Optional[str] = None
     deprem_toggle: bool = False
     raw_query: str
+    processed_query: Optional[str] = None
+    sql_query: Optional[str] = None
+    is_update_request: bool = False
     
 async def process_building_filter_query(query: str) -> Dict[str, Any]:
     """
@@ -63,7 +66,7 @@ async def process_building_filter_query(query: str) -> Dict[str, Any]:
         
         # Get the function call arguments
         tool_call = response.choices[0].message.tool_calls[0]
-        if tool_call.function.name != "extract_building_filters":
+        if tool_call.function.name != "extract_building_filter_parameters":
             logger.warning(f"Unexpected function call: {tool_call.function.name}")
             return {"error": "Unexpected function call"}
         
@@ -77,9 +80,25 @@ async def process_building_filter_query(query: str) -> Dict[str, Any]:
                 filter_params["deprem_toggle"] = True
             else:
                 filter_params.setdefault("deprem_toggle", False)
+            
+            # Handle processed query if available
+            if "processed_query" not in filter_params or not filter_params["processed_query"]:
+                filter_params["processed_query"] = query
+                
+            # Handle update request flag if missing
+            filter_params.setdefault("is_update_request", False)
+            
+            # PROBLEM ÇÖZÜMÜ - deprem_toggle değerini her zaman boolean olarak ayarla
+            filter_params.setdefault("deprem_toggle", False)  # Varsayılan değer boolean olarak False
                 
             # Include the original query
             filter_params["raw_query"] = query
+            
+            # Log SQL query if present
+            if "sql_query" in filter_params and filter_params["sql_query"]:
+                logger.info(f"Generated SQL query: {filter_params['sql_query']}")
+                
+            logger.info(f"Final filter params: {filter_params}")  # Son parametreleri logla
             
             return filter_params
             

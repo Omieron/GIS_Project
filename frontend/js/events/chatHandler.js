@@ -83,22 +83,23 @@ function switchAIMode() {
   // Update UI based on mode
   if (isFilterMode) {
     // Building Filter Mode - Orange color
-    //chatHeader.style.background = '#FF9800';
-    chatInput.placeholder = 'Bina filtreleri için doğal dil sorgusu yazın...';
+    if (chatHeader) chatHeader.style.background = '#FF9800';
+    if (chatInput) chatInput.placeholder = 'Bina filtreleri için doğal dil sorgusu yazın...';
     console.log('🔄 Switched to Building Filter mode');
     
     // Update label styles
-    locationLabel.classList.remove('active');
-    filterLabel.classList.add('active');
+    if (locationLabel) locationLabel.classList.remove('active');
+    if (filterLabel) filterLabel.classList.add('active');
   } else {
     // Location Mode - Blue color
-    //chatHeader.style.background = '#2196F3';
-    chatInput.placeholder = 'Konum sorgusu yazın...';
+    if (chatHeader) chatHeader.style.background = '#2196F3';
+    if (chatInput) chatInput.placeholder = 'Konum sorgusu yazın...';
     console.log('🔄 Switched to Location Search mode');
     
     // Update label styles
-    locationLabel.classList.add('active');
-    filterLabel.classList.remove('active');
+    // Update label styles - NULL KONTROLÜ EKLE
+    if (locationLabel) locationLabel.classList.add('active');
+    if (filterLabel) filterLabel.classList.remove('active');
   }
   
   // Add a system message indicating the mode change
