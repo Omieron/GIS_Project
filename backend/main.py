@@ -2,6 +2,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse, JSONResponse
 from maks.bina import router as bina_router
+from maks.restore import router as restore_router
+from maks.clone import router as clone_router
 
 # Import AILocationService router
 from AILocationService.routers.location_router import router as location_router
@@ -25,6 +27,8 @@ app.add_middleware(
 )
 
 app.include_router(bina_router, prefix="/maks")
+app.include_router(restore_router, prefix="/maks")
+app.include_router(clone_router, prefix="/maks")
 
 # Include AILocationService router - note that location_router already has prefix='/api'
 app.include_router(location_router)
