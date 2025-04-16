@@ -6,5 +6,6 @@ export function bindMenuToggle() {
   
     toggleBtn.addEventListener('click', () => {
       menuBox.classList.toggle('active');
+      menuBox.classList.remove('hidden');
     });
   }
