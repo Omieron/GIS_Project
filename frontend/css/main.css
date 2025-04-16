@@ -617,7 +617,7 @@
       }
       
       /* Restore button styling */
-      .restore-btn {
+      .databaseManagement-btn {
         background-color: #4CAF50;
         color: white;
         border: none;
@@ -630,15 +630,15 @@
         transition: background-color 0.2s;
       }
       
-      body.dark-mode .restore-btn {
+      body.dark-mode .databaseManagement-btn {
         background-color: #2e7d32;
       }
       
-      .restore-btn:hover {
+      .databaseManagement-btn:hover {
         background-color: #388E3C;
       }
       
-      body.dark-mode .restore-btn:hover {
+      body.dark-mode .databaseManagement-btn:hover {
         background-color: #1b5e20;
       }
       

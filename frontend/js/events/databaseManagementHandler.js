@@ -1,8 +1,9 @@
-import { restoreService } from '../services/databaseManagementService.js'; 
+import { restoreService, cloneService } from '../services/databaseManagementService.js'; 
 
 export function initDatabaseManagement(){
     restoreDatabase();
-    console.log("Database yonetim sistemi hazirlandi!");
+    cloneDatabase();
+    console.log("✅ Database yonetim sistemi hazirlandi!");
 }
 
 function restoreDatabase() {
@@ -14,5 +15,17 @@ function restoreDatabase() {
         if (!confirmed) return;
 
         await restoreService();
+    });
+}
+
+function cloneDatabase() {
+    const btn = document.getElementById("clone-btn");
+    if (!btn) return;
+
+    btn.addEventListener("click", async function () {
+        const confirmed = confirm("Veritabanını yedeklemek istediğinize emin misiniz?");
+        if (!confirmed) return;
+
+        await cloneService();
     });
 }
