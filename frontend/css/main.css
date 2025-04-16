@@ -25,6 +25,164 @@
     bottom: 0;
     width: 100%;
   }
+
+  /* ===============================================
+   NOTIFICATION SYSTEM
+   =============================================== */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 350px;
+  z-index: 10000;
+}
+
+.notification {
+  background-color: white;
+  color: #333;
+  border-left: 4px solid #4CAF50;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: flex-start;
+  opacity: 0;
+  transform: translateX(30px); /* Sağdan gelecek */
+  transition: all 0.3s ease;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+.notification.error {
+  border-left-color: #f44336;
+}
+
+.notification.warning {
+  border-left-color: #ff9800;
+}
+
+.notification.info {
+  border-left-color: #2196F3;
+}
+
+.notification-icon {
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.notification-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.notification-content {
+  flex-grow: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.notification-message {
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0;
+  margin-left: 10px;
+  transition: color 0.2s;
+}
+
+.notification-close:hover {
+  color: #333;
+}
+
+.slide-out {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.slide-out-right {
+  opacity: 0;
+  transform: translateX(100%); /* Sağa doğru ekrandan tamamen çıkacak */
+}
+
+/* ===============================================
+   LOADING OVERLAY
+   =============================================== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.loading-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.notification-loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #4CAF50;
+  animation: notification-spin 1s ease-in-out infinite;
+  margin-bottom: 20px;
+}
+
+.loading-text {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 80%;
+}
+
+@keyframes notification-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dark mode support */
+body.dark-mode .notification {
+  background-color: #2c2c2c;
+  color: #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .notification-close {
+  color: #aaa;
+}
+
+body.dark-mode .notification-close:hover {
+  color: #fff;
+}
   
   /* ===============================================
      BAŞLANGIÇ TUŞU
