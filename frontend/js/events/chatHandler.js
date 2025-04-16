@@ -83,7 +83,6 @@ function switchAIMode() {
   // Update UI based on mode
   if (isFilterMode) {
     // Building Filter Mode - Orange color
-    if (chatHeader) chatHeader.style.background = '#FF9800';
     if (chatInput) chatInput.placeholder = 'Bina filtreleri için doğal dil sorgusu yazın...';
     console.log('🔄 Switched to Building Filter mode');
     
@@ -92,7 +91,6 @@ function switchAIMode() {
     if (filterLabel) filterLabel.classList.add('active');
   } else {
     // Location Mode - Blue color
-    if (chatHeader) chatHeader.style.background = '#2196F3';
     if (chatInput) chatInput.placeholder = 'Konum sorgusu yazın...';
     console.log('🔄 Switched to Location Search mode');
     

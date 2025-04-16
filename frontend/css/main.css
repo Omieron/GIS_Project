@@ -1042,23 +1042,6 @@
   }
   
   /* ===============================================
-     DEPREM FILTER WRAPPER TRANSITION
-     =============================================== */
-  #deprem-filter-wrapper {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
-    margin-top: 0;
-  }
-  
-  #deprem-filter-wrapper.active {
-    max-height: 100px;
-    opacity: 1;
-    margin-top: 10px;
-  }
-  
-  /* ===============================================
      MODAL RESPONSIVE IMPROVEMENTS
      =============================================== */
   @media (max-width: 768px) {

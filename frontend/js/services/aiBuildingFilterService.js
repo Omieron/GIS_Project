@@ -2,6 +2,8 @@
  * Service for interacting with the AI Building Filter API
  */
 
+import { checkDepremToggle } from '../events/maksHandler.js';
+
 // Base URL for the API
 const API_BASE_URL = 'http://localhost:8001';
 
@@ -103,6 +105,7 @@ export function applyBuildingFilters(filterParams) {
       if (depremToggle) {
         depremToggle.checked = true;
         console.log(`✅ Set deprem_toggle to true (required for deprem_riski)`);
+        checkDepremToggle(map);
         
         // Then show the deprem_riski dropdown
         const filterWrapper = document.getElementById('deprem-filter-wrapper');

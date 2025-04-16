@@ -104,7 +104,7 @@ function updateBinaList(filtered) {
 }
 
 
-function checkDepremToggle(map) {
+export function checkDepremToggle(map) {
   const toggle = document.getElementById('deprem-toggle');
   const filterWrapper = document.getElementById('deprem-filter-wrapper');
 
