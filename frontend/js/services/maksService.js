@@ -1,5 +1,6 @@
 import { renderBuildingStats } from '../events/infoHandler.js';
 import { resetAllBuildingFilters } from '../events/maksHandler.js';
+import { showNotification, showLoading, hideLoading } from '../events/notificationHandler.js';
 
 export const offsetX = 0;
 export const offsetY = -0.0158;
@@ -36,6 +37,8 @@ export function applyOffset(features) {
 export function fetchBuildingHandler(map) {
   window.addEventListener('circle:created', async (e) => {
     if (e.detail.type !== 'bina') return;
+
+    showLoading("Bina bilgileri veritabanından gelmektedir, lütfen bekleyiniz...");
 
     const marker = e.detail.marker;
     const radius = 500;
@@ -80,6 +83,8 @@ export function fetchBuildingHandler(map) {
         console.log(`🏢 ${data.features.length} bina bulundu. Benzersiz ID: ${uniqueIds}`);
       } catch (err) {
         console.error('❌ Bina verisi alınamadı:', err);
+        hideLoading();
+        showNotification("Bina verileri alınamadı", "ERROR");
       }
     }
 
@@ -97,6 +102,9 @@ export function fetchBuildingHandler(map) {
   if (riskFilter) {
     riskFilter.addEventListener('change', () => updateLayerColorByRisk(map));
   }
+
+  hideLoading();
+
 }
 
 function getPaintProperties(byRisk = false) {

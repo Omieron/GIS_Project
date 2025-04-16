@@ -1,6 +1,7 @@
 import { createDraggableCircle } from '../map/circle.js';
 import { circleRegistry } from '../map/circleRegistry.js';
 import { showInfoCard  } from '../UI/leftTabMenu.js';
+import { showNotification } from './notificationHandler.js';
 
 export function bindUIEvents(map) {
   document.getElementById('btn-foursquare')?.addEventListener('click', () => {
@@ -19,7 +20,11 @@ export function bindUIEvents(map) {
 
     } else {
       console.log("⚠️ Foursquare çemberi zaten var");
+      showNotification("Foursquare çemberi zaten var.", "WARNING");
     }
+
+    document.getElementById("menu-toggle").click();
+  
   });
 
   document.getElementById('btn-overpass')?.addEventListener('click', () => {
@@ -34,9 +39,14 @@ export function bindUIEvents(map) {
 
       // overpass tabını aktif et
       showInfoCard('overpass-tab', 'Overpass');
+
     } else {
       console.log('⚠️ Overpass çemberi zaten var');
+      showNotification("Yol çemberi zaten var.", "WARNING");
     }
+    
+    document.getElementById("menu-toggle").click();
+  
   });
 
   document.getElementById('btn-bina')?.addEventListener('click', () => {
@@ -52,9 +62,14 @@ export function bindUIEvents(map) {
   
       // bina tabını aktif et
       showInfoCard('bina-tab', 'Bina');
+
     } else {
       console.log('⚠️ Bina çemberi zaten var');
+      showNotification("Bina çemberi zaten var.", "WARNING");
     }
+
+    document.getElementById("menu-toggle").click();
+  
   });
 }
 

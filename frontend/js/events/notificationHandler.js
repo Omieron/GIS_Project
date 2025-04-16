@@ -15,7 +15,7 @@ const notificationTypes = {
 };
 
 // Show notification
-function showNotification(message, type = 'SUCCESS', duration = 3000) { // Süreyi 1 saniye olarak değiştirdik
+function showNotification(message, type = 'SUCCESS', duration = 2000) { // Süreyi 1 saniye olarak değiştirdik
     const container = document.getElementById('notification-container');
     const notificationType = notificationTypes[type];
     const notificationId = 'notification-' + Date.now();
