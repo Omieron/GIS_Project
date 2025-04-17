@@ -3,6 +3,7 @@
  */
 
 import { checkDepremToggle } from '../events/maksHandler.js';
+import { updateLayerColorByRisk } from './maksService.js';
 
 // Base URL for the API
 const API_BASE_URL = 'http://localhost:8001';
@@ -104,8 +105,8 @@ export function applyBuildingFilters(filterParams) {
       const depremToggle = document.getElementById('deprem-toggle');
       if (depremToggle) {
         depremToggle.checked = true;
+        updateLayerColorByRisk(map);
         console.log(`✅ Set deprem_toggle to true (required for deprem_riski)`);
-        checkDepremToggle(map);
         
         // Then show the deprem_riski dropdown
         const filterWrapper = document.getElementById('deprem-filter-wrapper');
