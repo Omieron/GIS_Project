@@ -93,9 +93,11 @@ export function fetchBuildingHandler(map) {
     fetchAndRender(lat, lng);
 
     marker.on('dragend', () => {
+      showLoading("Bina bilgileri veritabanından gelmektedir, lütfen bekleyiniz...");
       const { lng, lat } = marker.getLngLat();
       fetchAndRender(lat, lng);
       resetAllBuildingFilters(map);
+      hideLoading();
     });
   });
 
