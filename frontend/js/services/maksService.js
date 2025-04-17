@@ -34,6 +34,73 @@ export function applyOffset(features) {
   return offsetData;
 }
 
+// Function to refresh building data after updates, preserving current filters
+export async function refreshBuildingData(map, marker, preserveFilters = true) {
+  try {
+    // Save the currently filtered building IDs if we need to preserve filters
+    const currentlyFilteredIds = preserveFilters && window.filteredBuildingIds ? [...window.filteredBuildingIds] : null;
+    
+    showLoading("Bina verisi yenileniyor...");
+    
+    const { lng, lat } = marker.getLngLat();
+    const lonQuery = lng - offsetX;
+    const latQuery = lat - offsetY;
+    const radius = 500;
+
+    // Fetch fresh data
+    const url = `http://localhost:8001/maks/bina?lon=${lonQuery}&lat=${latQuery}&radius=${radius}`;
+    const response = await fetch(url);
+    const rawData = await response.json();
+
+    if (!rawData || !rawData.features) {
+      console.warn('⚠️ Geçersiz GeoJSON verisi:', rawData);
+      hideLoading();
+      return false;
+    }
+
+    const data = applyOffset(rawData);
+    window.buildingCache = data;
+
+    // If we need to preserve filters and have filtered IDs
+    if (preserveFilters && currentlyFilteredIds && currentlyFilteredIds.length > 0) {
+      console.log(`🔄 Restoring filtered view with ${currentlyFilteredIds.length} filtered buildings`);
+      
+      // Filter the new data to match the previously filtered buildings
+      const filteredFeatures = data.features.filter(feature => 
+        currentlyFilteredIds.includes(feature.properties?.ID)
+      );
+      
+      // Store the filtered buildings again
+      window.filteredBuildings = filteredFeatures;
+      window.filteredBuildingIds = currentlyFilteredIds;
+      
+      // Update the map with just the filtered buildings
+      if (map.getSource('building-source')) {
+        const filteredData = {
+          type: "FeatureCollection",
+          features: filteredFeatures
+        };
+        map.getSource('building-source').setData(filteredData);
+      }
+    } else {
+      // Just show all the new data
+      if (map.getSource('building-source')) {
+        map.getSource('building-source').setData(data);
+      }
+    }
+    
+    updateLayerColorByRisk(map);
+    renderBuildingStats(preserveFilters && window.filteredBuildings ? window.filteredBuildings : data.features);
+    
+    hideLoading();
+    return true;
+  } catch (error) {
+    console.error('❌ Bina verisi yenilenirken hata oluştu:', error);
+    hideLoading();
+    return false;
+  }
+}
+
 export function fetchBuildingHandler(map) {
   window.addEventListener('circle:created', async (e) => {
     if (e.detail.type !== 'bina') return;
@@ -41,6 +108,8 @@ export function fetchBuildingHandler(map) {
     showLoading("Bina bilgileri veritabanından gelmektedir, lütfen bekleyiniz...");
 
     const marker = e.detail.marker;
+    // Store marker globally for later use in refreshing data
+    window.currentBuildingMarker = marker;
     const radius = 500;
 
     async function fetchAndRender(lat, lng) {

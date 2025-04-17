@@ -46,6 +46,16 @@ export function applyBuildingFilters(map) {
     return ok;
   });
 
+  // Store filtered buildings in a global variable for update operations
+  window.filteredBuildings = filtered;
+
+  // Extract and store filtered building IDs for updates
+  window.filteredBuildingIds = filtered
+    .map(feature => feature.properties?.ID)
+    .filter(id => id); // Remove any undefined or null IDs
+
+  console.log(`🔍 Filtered building IDs stored for updates: ${window.filteredBuildingIds.length} buildings`);
+
   const filteredGeoJSON = {
     type: "FeatureCollection",
     features: filtered

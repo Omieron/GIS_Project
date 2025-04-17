@@ -3,7 +3,7 @@
  */
 
 import { checkDepremToggle } from '../events/maksHandler.js';
-import { updateLayerColorByRisk } from './maksService.js';
+import { updateLayerColorByRisk, refreshBuildingData } from './maksService.js';
 
 // Base URL for the API
 const API_BASE_URL = 'http://localhost:8001';
@@ -22,24 +22,73 @@ export async function executeUpdateQuery(sqlQuery) {
   try {
     console.log(`🔄 Executing SQL update query: ${sqlQuery}`);
     
+    // Check if we have filtered buildings first
+    if (window.filteredBuildingIds && window.filteredBuildingIds.length > 0) {
+      // Use the filtered building IDs (from the UI filters)
+      const buildingIds = window.filteredBuildingIds;
+      console.log(`🔍 Updating ${buildingIds.length} filtered buildings (from UI filters)`);
+      
+      // Make the update request with only the filtered buildings
+      const response = await fetch(`${API_BASE_URL}/maks/update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          sql_query: sqlQuery,
+          building_ids: buildingIds 
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`❌ Error executing update query: ${errorText}`);
+        throw new Error(`SQL sorgusu çalıştırılırken hata: ${response.status} ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log(`✅ Update query executed successfully on filtered buildings:`, result);
+      
+      // Show toast notification if available
+      if (window.showToast) {
+        window.showToast({
+          message: `${result.affected_rows} filtrelenmiş bina güncellendi`,
+          type: 'success',
+          duration: 3000
+        });
+      }
+      
+      // Refresh building data to show updated attributes while preserving filters
+      if (window.currentBuildingMarker) {
+        console.log(`🔄 Refreshing building data after update...`);
+        await refreshBuildingData(map, window.currentBuildingMarker, true);
+      }
+      
+      return result;
+    }
+    
+    // Fallback to using all buildings in the cache if no filtered buildings exist
     // Get building IDs from cache - if no buildings are filtered/selected, don't proceed
     if (!window.buildingCache || !window.buildingCache.features || window.buildingCache.features.length === 0) {
       console.error('❌ No buildings are filtered/selected. Cannot perform update.');
       throw new Error('Güncellenecek bina bulunamadı. Lütfen önce bir bölge seçin.');
     }
     
-    // Extract the IDs from the filtered buildings
+    console.warn('⚠️ No filtered buildings found, falling back to all buildings in the radius');
+    
+    // Extract the IDs from all buildings in the radius
     const buildingIds = window.buildingCache.features
       .map(feature => feature.properties?.ID)
       .filter(id => id); // Remove any undefined or null IDs
     
     if (buildingIds.length === 0) {
-      console.error('❌ No valid building IDs found in the filtered set.');
-      throw new Error('Filtrelenmiş binalar için geçerli ID bulunamadı.');
+      console.error('❌ No valid building IDs found in the cache.');
+      throw new Error('Binalar için geçerli ID bulunamadı.');
     }
     
-    console.log(`🔍 Updating ${buildingIds.length} filtered buildings`);
+    console.log(`🔍 Updating ${buildingIds.length} buildings in the radius (fallback method)`);
     
+    // This part is now only used in the fallback case
     const response = await fetch(`${API_BASE_URL}/maks/update`, {
       method: 'POST',
       headers: {
@@ -67,6 +116,12 @@ export async function executeUpdateQuery(sqlQuery) {
         type: 'success',
         duration: 3000
       });
+    }
+    
+    // Refresh building data to show updated attributes
+    if (window.currentBuildingMarker) {
+      console.log(`🔄 Refreshing building data after update...`);
+      await refreshBuildingData(map, window.currentBuildingMarker, false);
     }
     
     return result;
