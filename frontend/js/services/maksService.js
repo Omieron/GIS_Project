@@ -83,7 +83,7 @@ export function fetchBuildingHandler(map) {
         console.log(`🏢 ${data.features.length} bina bulundu. Benzersiz ID: ${uniqueIds}`);
       } catch (err) {
         console.error('❌ Bina verisi alınamadı:', err);
-        hideLoading();
+        hideLoading(); // lazmiid
         showNotification("Bina verileri alınamadı", "ERROR");
       }
     }
