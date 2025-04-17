@@ -78,7 +78,8 @@ export function fetchBuildingHandler(map) {
 
         updateLayerColorByRisk(map);
         renderBuildingStats(data.features);
-
+        hideLoading(); // lazmiid
+        
         const uniqueIds = new Set(data.features.map(f => f.properties?.ID)).size;
         console.log(`🏢 ${data.features.length} bina bulundu. Benzersiz ID: ${uniqueIds}`);
       } catch (err) {
