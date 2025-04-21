@@ -3,18 +3,33 @@ name: 'edremit-backend'
 services:
   # Monolitik backend servisiniz
   backend:
-    build: ./backend  # Mevcut monolitik uygulamanız burada olmalı
+    build: ./backend
     container_name: backend_monolith
     restart: unless-stopped
     environment:
-      - DB_HOST=osm_postgres_container  # Mevcut çalışan PostgreSQL container'ınızın adı
+      - DB_HOST=osm_postgres_container
       - DB_PORT=5432
       - DB_NAME=edremit_maks
       - DB_USER=postgres
       - DB_PASSWORD=123
     networks:
       - backend-network
-      - osm-db-network  # PostgreSQL'in bulunduğu mevcut ağa bağlanıyoruz
+      - osm-db-network
+
+  # Yeni location servisi
+  location-service:
+    build: ./location-service
+    container_name: location_service
+    restart: unless-stopped
+    environment:
+      - DB_HOST=osm_postgres_container
+      - DB_PORT=5432
+      - DB_NAME=edremit_maks
+      - DB_USER=postgres
+      - DB_PASSWORD=123
+    networks:
+      - backend-network
+      - osm-db-network
       
   # Nginx Reverse Proxy
   nginx:
@@ -22,11 +37,12 @@ services:
     container_name: nginx-proxy
     restart: unless-stopped
     ports:
-      - "8001:8001"  # Dışarıya 8001 portunu açıyoruz
+      - "8001:8001"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
     depends_on:
       - backend
+      - location-service
     networks:
       - backend-network
 
@@ -35,4 +51,4 @@ networks:
     name: backend-network
     driver: bridge
   osm-db-network:
-    external: true  # Mevcut ağa bağlanmak için external olarak işaretliyoruz
+    external: true

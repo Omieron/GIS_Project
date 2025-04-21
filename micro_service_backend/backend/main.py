@@ -7,7 +7,7 @@ from maks.clone import router as clone_router
 from maks.update import router as update_router
 
 # Import AILocationService router
-from AILocationService.routers.location_router import router as location_router
+#from AILocationService.routers.location_router import router as location_router
 
 # Import AIBuildingFilter router
 from AIBuildingFilter.routers.filter_router import router as filter_router
@@ -33,7 +33,7 @@ app.include_router(clone_router, prefix="/maks")
 app.include_router(update_router, prefix="/maks")
 
 # Include AILocationService router - note that location_router already has prefix='/api'
-app.include_router(location_router)
+#app.include_router(location_router)
 
 # Include AIBuildingFilter router
 app.include_router(filter_router, prefix="/ai-filter")

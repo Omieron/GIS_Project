@@ -3,11 +3,11 @@ Location service router with endpoints for processing location-related queries
 """
 from fastapi import APIRouter, Request, Query
 from typing import Dict, Any, Optional, List
-from AILocationService.services.gpt import interpret_location
-from AILocationService.services.user_location import get_user_current_location
-from AILocationService.services.foursquare_service import find_place, find_food_place, find_landmark, find_expanded_query
-from AILocationService.services.overpass_service import find_amenities, find_poi_in_edremit, search_osm_by_name, get_edremit_boundaries
-from AILocationService.services.enhanced_location import enhanced_location_query
+from services.gpt import interpret_location
+from services.user_location import get_user_current_location
+from services.foursquare_service import find_place, find_food_place, find_landmark, find_expanded_query
+from services.overpass_service import find_amenities, find_poi_in_edremit, search_osm_by_name, get_edremit_boundaries
+from services.enhanced_location import enhanced_location_query
 
 # Create API router
 router = APIRouter(
@@ -15,6 +15,14 @@ router = APIRouter(
     tags=["location"],
     responses={404: {"description": "Not found"}},
 )
+
+@router.get("/health/", summary="Get location service info")
+async def get_location_info():
+    return {
+        "message": "Konum servisi çalışıyor",
+        "usage": "Konum sorgulaması için POST isteği yapın",
+        "example_body": {"prompt": "Edremit'te en yakın restoranlar"}
+    }
 
 @router.post("/location/", summary="Process a location query")
 async def process_location(
@@ -69,7 +77,7 @@ async def process_location(
         location_type = interpretation.get("location_type", "")
         
         # Check for Edremit-specific locations first
-        from AILocationService.services.geocode import EDREMIT_LOCATIONS
+        from services.geocode import EDREMIT_LOCATIONS
         location_lower = location_name.lower()
         
         if location_lower in EDREMIT_LOCATIONS:
@@ -87,7 +95,7 @@ async def process_location(
             }
         # Direct handling for Turkish cities
         elif location_lower in ["ankara", "istanbul", "izmir", "bursa", "antalya", "balikesir"]:
-            from AILocationService.services.geocode import TURKISH_CITIES
+            from services.geocode import TURKISH_CITIES
             city = location_lower
             coords = TURKISH_CITIES[city]
             result = {
@@ -151,7 +159,7 @@ async def process_location(
         # For schools and contextual searches
         if "school" in location_type.lower() or "lise" in location_type.lower() or "okul" in location_type.lower():
             # Find nearby schools in our dataset
-            from AILocationService.services.geocode import EDREMIT_LOCATIONS
+            from services.geocode import EDREMIT_LOCATIONS
             schools = []
             for name, data in EDREMIT_LOCATIONS.items():
                 if data.get("type") == "school":
@@ -190,7 +198,7 @@ async def process_location(
         # For beach or coastal searches
         elif "beach" in location_type.lower() or "plaj" in context.lower() or "deniz" in context.lower():
             # Find beaches or coastal areas
-            from AILocationService.services.geocode import EDREMIT_LOCATIONS
+            from services.geocode import EDREMIT_LOCATIONS
             beaches = []
             for name, data in EDREMIT_LOCATIONS.items():
                 if data.get("type") == "beach" or "plaj" in name:
@@ -296,7 +304,7 @@ async def process_location(
             landmark_name = interpretation.get("location_name")
             
         # Import EDREMIT_LOCATIONS
-        from AILocationService.services.geocode import EDREMIT_LOCATIONS
+        from services.geocode import EDREMIT_LOCATIONS
 
         # Special handling for commonly searched places in Edremit
         if landmark_name and landmark_name.lower() in ["kaymakamlık", "kaymakamligi", "belediye", "hükümet konağı", "devlet"]:

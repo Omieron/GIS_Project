@@ -5,12 +5,12 @@ import requests
 from typing import Dict, Any, List, Optional
 import math
 
-from AILocationService.config import FOURSQUARE_API_KEY, DEFAULT_RESULTS_LIMIT
+from config import FOURSQUARE_API_KEY, DEFAULT_RESULTS_LIMIT
 
 # Increased search radius for better context coverage
 DEFAULT_SEARCH_RADIUS = 5000  # 5km search radius
 EXPANDED_SEARCH_RADIUS = 10000  # 10km for landmarks and expanded searches
-from AILocationService.services.geocode import get_precise_coordinates, EDREMIT_LOCATIONS
+from services.geocode import get_precise_coordinates, EDREMIT_LOCATIONS
 
 # Foursquare API endpoints
 PLACES_SEARCH_URL = "https://api.foursquare.com/v3/places/search"
@@ -91,7 +91,7 @@ def find_place(query: str, location: str = None, latitude: float = None,
             
         # Then check for direct city queries
         elif query_lower in ["ankara", "istanbul", "izmir", "bursa", "antalya", "balikesir"]:
-            from AILocationService.services.geocode import TURKISH_CITIES
+            from services.geocode import TURKISH_CITIES
             city = query_lower
             if city in TURKISH_CITIES:
                 # Return city information directly
@@ -371,7 +371,7 @@ def fallback_search(query: str, location: str = None, latitude: float = None,
     
     This is a simplified version that uses direct OpenStreetMap queries
     """
-    from AILocationService.services.places import find_place_near_location
+    from services.places import find_place_near_location
     
     if location:
         # Use the OpenStreetMap search

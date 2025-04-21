@@ -1,7 +1,7 @@
 import requests
 import math
 from typing import Dict, Any, Optional, List, Tuple
-from AILocationService.services.geocode import get_precise_coordinates
+from services.geocode import get_precise_coordinates
 
 def find_place_near_location(place_type: str, context: str, radius=2000, previous_result=None):
     coords = get_precise_coordinates(context)

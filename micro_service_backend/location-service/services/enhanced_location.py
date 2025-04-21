@@ -4,8 +4,8 @@ Allows for enhanced location queries using OpenStreetMap data
 """
 from typing import Dict, Any, List, Optional
 import json
-from AILocationService.services.overpass_service import find_amenities, find_poi_in_edremit
-from AILocationService.services.gpt import interpret_location
+from services.overpass_service import find_amenities, find_poi_in_edremit
+from services.gpt import interpret_location
 
 # Common OpenStreetMap amenity and POI types
 OSM_AMENITY_TYPES = [

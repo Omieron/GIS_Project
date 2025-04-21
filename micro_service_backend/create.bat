@@ -55,11 +55,13 @@ if %ERRORLEVEL% equ 0 (
     echo.
     echo Swagger dokumantasyonuna erismek icin:
     echo http://localhost:8001/documentation
+    echo http://localhost:8001/location-docs
     
     echo.
-    echo Log dosyalarini kontrol etmek için:
-    echo - docker logs nginx-proxy      (Nginx logları)
-    echo - docker logs backend_monolith (Backend logları)
+    echo Log dosyalarini kontrol etmek icin:
+    echo - docker logs nginx-proxy      (Nginx loglari)
+    echo - docker logs backend_monolith (Backend loglari)
+    echo - docker logs location_service (Konum servisi loglari)
 ) else (
     echo.
     echo HATA: Sistem baslatilamadi!
@@ -68,5 +70,5 @@ if %ERRORLEVEL% equ 0 (
 )
 
 echo.
-echo İslem tamamlandi!
+echo Islem tamamlandi!
 pause

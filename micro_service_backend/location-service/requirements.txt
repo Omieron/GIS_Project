@@ -1,0 +1,9 @@
+fastapi
+pydantic
+uvicorn
+httpx
+python-dotenv
+requests
+openai
+geopy
+overpy
