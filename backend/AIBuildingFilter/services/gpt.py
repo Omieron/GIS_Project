@@ -3,16 +3,16 @@ GPT integration for natural language building filter queries
 """
 import json
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 
 from openai import OpenAI
 from pydantic import BaseModel
 
-from AIBuildingFilter.config import (
-    OPENAI_API_KEY, 
-    DEFAULT_GPT_MODEL, 
-    BUILDING_FILTER_SYSTEM_PROMPT,
-    BUILDING_FILTER_FUNCTIONS
+from ..config import (
+    OPENAI_API_FILTER_KEY, 
+    DEFAULT_GPT_MODEL,
+    FALLBACK_GPT_MODEL,
+    BUILDING_FILTER_FUNCTION
 )
 
 # Set up logging
@@ -20,7 +20,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize OpenAI client
-client = OpenAI(api_key=OPENAI_API_KEY)
+client = OpenAI(api_key=OPENAI_API_FILTER_KEY)
+
+# Minimal system prompt to guide the model
+MINIMAL_SYSTEM_PROMPT = "Sen bir bina filtreleme ve güncelleme aracısın. Türkçe bina sorgularını analiz ederek parametrelere dönüştür."
 
 class BuildingFilterResponse(BaseModel):
     zeminustu: Optional[int] = None
@@ -38,6 +41,7 @@ class BuildingFilterResponse(BaseModel):
 async def process_building_filter_query(query: str) -> Dict[str, Any]:
     """
     Process a natural language query about building filters and extract parameters.
+    Uses a fine-tuned model to understand Turkish queries about building filters.
     
     Args:
         query: The natural language query from the user
@@ -48,27 +52,41 @@ async def process_building_filter_query(query: str) -> Dict[str, Any]:
     try:
         logger.info(f"Processing building filter query: {query}")
         
-        # Create chat completion with function calling
+        # Create chat completion with function calling using fine-tuned model
         response = client.chat.completions.create(
             model=DEFAULT_GPT_MODEL,
             messages=[
-                {"role": "system", "content": BUILDING_FILTER_SYSTEM_PROMPT},
+                {"role": "system", "content": MINIMAL_SYSTEM_PROMPT},
                 {"role": "user", "content": query}
             ],
-            tools=BUILDING_FILTER_FUNCTIONS,
-            tool_choice="auto"
+            tools=[{"type": "function", "function": BUILDING_FILTER_FUNCTION}],
+            tool_choice={"type": "function", "function": {"name": "extract_building_filter_parameters"}}
         )
         
         # Extract the function call
         if not response.choices or not response.choices[0].message.tool_calls:
-            logger.warning("No function call found in response")
-            return {"error": "Failed to process query"}
+            logger.warning("No function call found in response, trying fallback model")
+            
+            # Try fallback model
+            response = client.chat.completions.create(
+                model=FALLBACK_GPT_MODEL,
+                messages=[
+                    {"role": "system", "content": MINIMAL_SYSTEM_PROMPT},
+                    {"role": "user", "content": query}
+                ],
+                tools=[{"type": "function", "function": BUILDING_FILTER_FUNCTION}],
+                tool_choice={"type": "function", "function": {"name": "extract_building_filter_parameters"}}
+            )
+            
+            if not response.choices or not response.choices[0].message.tool_calls:
+                logger.error("Fallback model also failed to provide function call")
+                return {"error": "Failed to process query", "raw_query": query}
         
         # Get the function call arguments
         tool_call = response.choices[0].message.tool_calls[0]
         if tool_call.function.name != "extract_building_filter_parameters":
             logger.warning(f"Unexpected function call: {tool_call.function.name}")
-            return {"error": "Unexpected function call"}
+            return {"error": "Unexpected function call", "raw_query": query}
         
         # Parse the function arguments as JSON
         try:
@@ -87,9 +105,6 @@ async def process_building_filter_query(query: str) -> Dict[str, Any]:
                 
             # Handle update request flag if missing
             filter_params.setdefault("is_update_request", False)
-            
-            # PROBLEM ÇÖZÜMÜ - deprem_toggle değerini her zaman boolean olarak ayarla
-            filter_params.setdefault("deprem_toggle", False)  # Varsayılan değer boolean olarak False
                 
             # Include the original query
             filter_params["raw_query"] = query
@@ -98,8 +113,6 @@ async def process_building_filter_query(query: str) -> Dict[str, Any]:
             if "sql_query" in filter_params and filter_params["sql_query"]:
                 logger.info(f"Generated SQL query: {filter_params['sql_query']}")
                 
-            logger.info(f"Final filter params: {filter_params}")  # Son parametreleri logla
-            
             return filter_params
             
         except json.JSONDecodeError:
