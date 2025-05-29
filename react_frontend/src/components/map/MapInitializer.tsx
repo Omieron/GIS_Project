@@ -7,7 +7,6 @@ import StartButton from '../ui/StartButton';
 import SettingsPanel from '../ui/SettingsPanel';
 import '../../styles/MapInitializer.css';
 
-// Mapbox access token
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 const MapInitializer: React.FC = () => {
@@ -40,7 +39,6 @@ const MapInitializer: React.FC = () => {
       mapRef.current = map;
       rotateGlobe(map);
       
-      // 3D Buildings manager'ını oluştur ve ekle
       buildings3DRef.current = new Buildings3D(map, 15);
       if (is3DBuildingsEnabled) {
         buildings3DRef.current.addBuildings();
@@ -49,7 +47,6 @@ const MapInitializer: React.FC = () => {
       setMapLoaded(true);
     });
 
-    // Cleanup function
     return () => {
       if (buildings3DRef.current) {
         buildings3DRef.current.removeBuildings();
@@ -68,21 +65,31 @@ const MapInitializer: React.FC = () => {
   };
 
   const handleDarkModeToggle = (enabled: boolean): void => {
-    setIsDarkMode(enabled);
-    if (mapRef.current) {
-      const style = enabled 
-        ? 'mapbox://styles/mapbox/dark-v11' 
-        : 'mapbox://styles/mapbox/streets-v12';
-      mapRef.current.setStyle(style);
-      
-      // Style değişikliğinden sonra 3D buildings'i yeniden ekle
-      mapRef.current.once('styledata', () => {
-        if (buildings3DRef.current && is3DBuildingsEnabled) {
-          buildings3DRef.current.addBuildings();
+  setIsDarkMode(enabled);
+  
+  if (mapRef.current && buildings3DRef.current) {
+    const style = enabled
+      ? 'mapbox://styles/mapbox/dark-v11'
+      : 'mapbox://styles/mapbox/streets-v12';
+
+    buildings3DRef.current.removeBuildings();   
+    mapRef.current.setStyle(style);
+    
+    mapRef.current.once('styledata', () => {
+      const checkStyleLoaded = () => {
+        if (mapRef.current?.isStyleLoaded() && buildings3DRef.current) {
+          buildings3DRef.current.resetState();
+          if (is3DBuildingsEnabled) {
+            buildings3DRef.current.addBuildings();
+          }
+        } else {
+          setTimeout(checkStyleLoaded, 50);
         }
-      });
-    }
-  };
+      };
+      setTimeout(checkStyleLoaded, 100);
+    });
+  }
+};
 
   const handle3DBuildingsToggle = (enabled: boolean): void => {
     setIs3DBuildingsEnabled(enabled);
