@@ -6,11 +6,10 @@ export function rotateGlobe(map: mapboxgl.Map): void {
     function animate(): void {
         angle = (angle + 0.1) % 360;
 
-        // Başlangıç noktası Türkiye: ~35E boylam
         const baseLng = 35;
         const currentLng = baseLng - angle;
 
-        map.setCenter([currentLng, 10]); // 10: Türkiye'nin enlemi (yaklaşık)
+        map.setCenter([currentLng, 10]); 
         map.setZoom(1.05);
         animationFrameId = requestAnimationFrame(animate);
     }
@@ -29,7 +28,7 @@ export function flyToLocation(map: mapboxgl.Map): void {
     stopRotation(); // 🌪️ Dönmeyi durdur
 
     map.flyTo({
-        center: [27.024772, 39.596321], // Koordinatlar (muhtemelen Türkiye'de bir yer)
+        center: [27.024772, 39.596321], 
         zoom: 15,
         pitch: 60,
         bearing: -17.6,

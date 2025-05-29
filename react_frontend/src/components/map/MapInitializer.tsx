@@ -4,6 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { rotateGlobe, flyToLocation } from './mapAnimation';
 import { Buildings3D } from './3DBuildings';
 import StartButton from '../ui/StartButton';
+import SettingsPanel from '../ui/SettingsPanel';
 import '../../styles/MapInitializer.css';
 
 // Mapbox access token
@@ -15,6 +16,8 @@ const MapInitializer: React.FC = () => {
   const buildings3DRef = useRef<Buildings3D | null>(null);
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
   const [showButton, setShowButton] = useState<boolean>(true);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [is3DBuildingsEnabled, setIs3DBuildingsEnabled] = useState<boolean>(true);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -39,7 +42,9 @@ const MapInitializer: React.FC = () => {
       
       // 3D Buildings manager'ını oluştur ve ekle
       buildings3DRef.current = new Buildings3D(map, 15);
-      buildings3DRef.current.addBuildings();
+      if (is3DBuildingsEnabled) {
+        buildings3DRef.current.addBuildings();
+      }
       
       setMapLoaded(true);
     });
@@ -62,6 +67,34 @@ const MapInitializer: React.FC = () => {
     }
   };
 
+  const handleDarkModeToggle = (enabled: boolean): void => {
+    setIsDarkMode(enabled);
+    if (mapRef.current) {
+      const style = enabled 
+        ? 'mapbox://styles/mapbox/dark-v11' 
+        : 'mapbox://styles/mapbox/streets-v12';
+      mapRef.current.setStyle(style);
+      
+      // Style değişikliğinden sonra 3D buildings'i yeniden ekle
+      mapRef.current.once('styledata', () => {
+        if (buildings3DRef.current && is3DBuildingsEnabled) {
+          buildings3DRef.current.addBuildings();
+        }
+      });
+    }
+  };
+
+  const handle3DBuildingsToggle = (enabled: boolean): void => {
+    setIs3DBuildingsEnabled(enabled);
+    if (buildings3DRef.current) {
+      if (enabled) {
+        buildings3DRef.current.addBuildings();
+      } else {
+        buildings3DRef.current.removeBuildings();
+      }
+    }
+  };
+
   return (
     <div className="map-wrapper">
       <div 
@@ -73,6 +106,14 @@ const MapInitializer: React.FC = () => {
       <StartButton 
         onClick={handleStartClick}
         isVisible={showButton && mapLoaded}
+      />
+
+      <SettingsPanel
+        isDarkMode={isDarkMode}
+        onDarkModeToggle={handleDarkModeToggle}
+        is3DBuildingsEnabled={is3DBuildingsEnabled}
+        on3DBuildingsToggle={handle3DBuildingsToggle}
+        isVisible={mapLoaded}
       />
     </div>
   );

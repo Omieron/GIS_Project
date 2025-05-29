@@ -8,22 +8,18 @@ export class Buildings3D {
     this.minZoomLevel = minZoom;
   }
 
-  /**
-   * 3D binaları haritaya ekler
-   */
+  
   public addBuildings(): void {
     if (this.isAdded || !this.map.isStyleLoaded()) {
       return;
     }
 
     try {
-      // Sky layer (atmosfer efekti) ekle
+
       this.addSkyLayer();
       
-      // 3D buildings layer ekle
       this.add3DBuildingsLayer();
       
-      // Zoom event listener ekle
       this.setupZoomListener();
       
       this.isAdded = true;
@@ -32,9 +28,7 @@ export class Buildings3D {
     }
   }
 
-  /**
-   * Sky layer ekler (atmosfer efekti için)
-   */
+  
   private addSkyLayer(): void {
     if (!this.map.getLayer('sky')) {
       this.map.addLayer({
@@ -49,9 +43,7 @@ export class Buildings3D {
     }
   }
 
-  /**
-   * 3D buildings layer'ını ekler
-   */
+  
   private add3DBuildingsLayer(): void {
     if (!this.map.getLayer('3d-buildings')) {
       // Label layer'larını bul
@@ -74,7 +66,6 @@ export class Buildings3D {
         'type': 'fill-extrusion',
         'minzoom': this.minZoomLevel,
         'paint': {
-          // Bina yüksekliğine göre renklendirme
           'fill-extrusion-color': [
             'interpolate',
             ['linear'],
@@ -85,7 +76,6 @@ export class Buildings3D {
             200, 'rgba(168, 168, 168, 0.7)',
             300, 'rgba(144, 144, 144, 0.7)'
           ],
-          // Bina yüksekliği
           'fill-extrusion-height': [
             'interpolate',
             ['linear'],
@@ -93,7 +83,6 @@ export class Buildings3D {
             this.minZoomLevel, 0,
             this.minZoomLevel + 0.05, ['get', 'height']
           ],
-          // Bina taban yüksekliği
           'fill-extrusion-base': [
             'interpolate',
             ['linear'],
@@ -103,28 +92,22 @@ export class Buildings3D {
           ],
           'fill-extrusion-opacity': 0.6
         }
-      }, labelLayerId); // Label'lardan önce ekle
+      }, labelLayerId); 
 
-      // Başlangıçta gizli yap
       this.map.setLayoutProperty('3d-buildings', 'visibility', 'none');
     }
   }
 
-  /**
-   * Zoom seviyesi değişikliklerini dinler
-   */
+  
   private setupZoomListener(): void {
     this.map.on('zoom', () => {
       this.updateBuildingsVisibility();
     });
 
-    // İlk yükleme için de kontrol et
     this.updateBuildingsVisibility();
   }
 
-  /**
-   * Zoom seviyesine göre binaların görünürlüğünü günceller
-   */
+  
   private updateBuildingsVisibility(): void {
     const currentZoom = this.map.getZoom();
     const shouldShow = currentZoom >= this.minZoomLevel;
@@ -139,17 +122,13 @@ export class Buildings3D {
     }
   }
 
-  /**
-   * Minimum zoom seviyesini günceller
-   */
+  
   public setMinZoom(zoom: number): void {
     this.minZoomLevel = zoom;
     this.updateBuildingsVisibility();
   }
 
-  /**
-   * 3D binaları kaldırır
-   */
+  
   public removeBuildings(): void {
     if (this.map.getLayer('3d-buildings')) {
       this.map.removeLayer('3d-buildings');
@@ -162,9 +141,10 @@ export class Buildings3D {
     this.isAdded = false;
   }
 
-  /**
-   * Bina renklerini günceller
-   */
+  public isEnabled(): boolean {
+    return this.isAdded && this.map.getLayer('3d-buildings') !== undefined;
+  }
+  
   public updateColors(colorStops: { height: number; color: string }[]): void {
     if (!this.map.getLayer('3d-buildings')) return;
 
@@ -178,9 +158,7 @@ export class Buildings3D {
     this.map.setPaintProperty('3d-buildings', 'fill-extrusion-color', colorExpression as any);
   }
 
-  /**
-   * Şeffaflığı günceller
-   */
+  
   public updateOpacity(opacity: number): void {
     if (this.map.getLayer('3d-buildings')) {
       this.map.setPaintProperty('3d-buildings', 'fill-extrusion-opacity', opacity);
@@ -188,7 +166,7 @@ export class Buildings3D {
   }
 }
 
-// Utility fonksiyonlar
+
 export const createBuildings3D = (map: mapboxgl.Map, minZoom: number = 15): Buildings3D => {
   return new Buildings3D(map, minZoom);
 };

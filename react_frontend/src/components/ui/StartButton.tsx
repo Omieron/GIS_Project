@@ -2,15 +2,15 @@ import React from 'react';
 import '../../styles/StartButton.css';
 
 interface StartButtonProps {
-  /** Buton tıklandığında çalışacak fonksiyon */
+
   onClick: () => void;
-  /** Butonun görünür olup olmayacağı */
+
   isVisible?: boolean;
-  /** Buton metnini özelleştirmek için */
+
   children?: React.ReactNode;
-  /** Buton devre dışı bırakılabilir */
+
   disabled?: boolean;
-  /** CSS sınıfı eklemek için */
+
   className?: string;
 }
 

@@ -1,0 +1,233 @@
+/* SETTINGS PANEL - Modern ve Şık */
+
+.settings-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+}
+
+/* Settings Toggle Button */
+.settings-toggle {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.settings-toggle:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.settings-toggle svg {
+  color: #4f46e5;
+  transition: transform 0.3s ease;
+}
+
+.settings-panel.open .settings-toggle svg {
+  transform: rotate(90deg);
+}
+
+/* Settings Content Panel */
+.settings-content {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 320px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-panel.open .settings-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* Settings Header */
+.settings-header {
+  padding: 20px 20px 0 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+}
+
+.settings-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  padding-bottom: 16px;
+}
+
+/* Settings Options */
+.settings-options {
+  padding: 0 20px 20px 20px;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.setting-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.setting-icon {
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+}
+
+.setting-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-text label {
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.setting-description {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.3;
+}
+
+/* Modern Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e5e7eb;
+  border-radius: 28px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  top: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #4f46e5;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+}
+
+.toggle-switch:hover .toggle-slider {
+  box-shadow: 0 0 0 8px rgba(79, 70, 229, 0.1);
+}
+
+/* Overlay for mobile */
+.settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: -1;
+  backdrop-filter: blur(2px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .settings-panel {
+    top: 15px;
+    right: 15px;
+  }
+  
+  .settings-content {
+    width: calc(100vw - 30px);
+    right: -15px;
+  }
+  
+  .settings-toggle {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/* Accessibility */
+.toggle-switch input:focus + .toggle-slider {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.setting-text label:hover {
+  color: #4f46e5;
+}
+
+/* Smooth transitions for all interactive elements */
+.setting-item {
+  transition: background-color 0.2s ease;
+}
+
+.setting-item:hover {
+  background-color: rgba(79, 70, 229, 0.02);
+  border-radius: 8px;
+  margin: 0 -8px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
