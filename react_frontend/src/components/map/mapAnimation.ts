@@ -1,5 +1,3 @@
-import mapboxgl from 'mapbox-gl';
-
 let animationFrameId: number | null = null;
 
 export function rotateGlobe(map: mapboxgl.Map): void {

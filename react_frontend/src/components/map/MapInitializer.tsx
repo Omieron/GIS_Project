@@ -2,7 +2,8 @@ import { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { rotateGlobe, flyToLocation } from './mapAnimation';
-import '../styles/MapInitializer.css';
+import { Buildings3D } from './3DBuildings';
+import '../../styles/MapInitializer.css';
 
 // Mapbox access token
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -10,6 +11,7 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 const MapInitializer: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+  const buildings3DRef = useRef<Buildings3D | null>(null);
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
   const [showButton, setShowButton] = useState<boolean>(true);
 
@@ -33,11 +35,19 @@ const MapInitializer: React.FC = () => {
     map.on('load', () => {
       mapRef.current = map;
       rotateGlobe(map);
+      
+      // 3D Buildings manager'ını oluştur ve ekle
+      buildings3DRef.current = new Buildings3D(map, 15);
+      buildings3DRef.current.addBuildings();
+      
       setMapLoaded(true);
     });
 
     // Cleanup function
     return () => {
+      if (buildings3DRef.current) {
+        buildings3DRef.current.removeBuildings();
+      }
       if (mapRef.current) {
         map.remove();
       }

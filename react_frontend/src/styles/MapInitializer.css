@@ -1,20 +1,4 @@
-/* Reset ve temel stiller */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-  overflow: hidden;
-  font-family: 'Arial', sans-serif;
-}
-
-#root {
-  height: 100vh;
-  width: 100vw;
-}
+/* MAP COMPONENT SPECIFIC STYLES */
 
 /* Map Wrapper - Tam ekran container */
 .map-wrapper {
@@ -100,22 +84,6 @@ html, body {
 .show-after-start {
   opacity: 0;
   pointer-events: none;
-}
-
-/* Mapbox kontrolleri için stil düzenlemeleri */
-.mapboxgl-ctrl-bottom-left,
-.mapboxgl-ctrl-bottom-right {
-  display: none;
-}
-
-.mapboxgl-ctrl-top-right {
-  top: 20px;
-  right: 20px;
-}
-
-.mapboxgl-ctrl-top-left {
-  top: 20px;
-  left: 20px;
 }
 
 /* Responsive design */
