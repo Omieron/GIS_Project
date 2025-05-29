@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { rotateGlobe, flyToLocation } from './mapAnimation';
 import { Buildings3D } from './3DBuildings';
+import StartButton from '../ui/StartButton';
 import '../../styles/MapInitializer.css';
 
 // Mapbox access token
@@ -54,7 +55,7 @@ const MapInitializer: React.FC = () => {
     };
   }, []);
 
-  const handleClick = (): void => {
+  const handleStartClick = (): void => {
     if (mapRef.current) {
       flyToLocation(mapRef.current);
       setShowButton(false);
@@ -69,15 +70,10 @@ const MapInitializer: React.FC = () => {
         className="map-container"
       />
       
-      {showButton && mapLoaded && (
-        <button
-          id="start-btn"
-          className="start-button"
-          onClick={handleClick}
-        >
-          🌍 Keşfet
-        </button>
-      )}
+      <StartButton 
+        onClick={handleStartClick}
+        isVisible={showButton && mapLoaded}
+      />
     </div>
   );
 };

@@ -23,58 +23,6 @@
   height: 100% !important;
 }
 
-/* Keşfet butonu - Map container'ının dışında */
-.start-button {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  
-  /* Buton stili */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 16px 32px;
-  font-size: 18px;
-  font-weight: 600;
-  border-radius: 50px;
-  cursor: pointer;
-  
-  /* Gölge ve efektler */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  
-  /* Animasyon */
-  transition: all 0.3s ease;
-  animation: pulse 2s infinite;
-  z-index: 1000;
-  pointer-events: auto;
-}
-
-.start-button:hover {
-  transform: translate(-50%, -50%) scale(1.05);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-.start-button:active {
-  transform: translate(-50%, -50%) scale(0.98);
-}
-
-/* Pulse animasyonu */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-  }
-  100% {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  }
-}
-
 /* Hide/Show animasyonları */
 .hide-on-start {
   opacity: 1;
@@ -84,21 +32,6 @@
 .show-after-start {
   opacity: 0;
   pointer-events: none;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .start-button {
-    padding: 14px 28px;
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .start-button {
-    padding: 12px 24px;
-    font-size: 14px;
-  }
 }
 
 /* Loading state (isteğe bağlı) */
