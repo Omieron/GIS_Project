@@ -1,0 +1,156 @@
+/* Reset ve temel stiller */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Map Container - Tam ekran */
+.map-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Mapbox haritası */
+#map {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Keşfet butonu */
+.start-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  /* Buton stili */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  
+  /* Gölge ve efektler */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  /* Animasyon */
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+  z-index: 1000;
+}
+
+.start-button:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.start-button:active {
+  transform: translate(-50%, -50%) scale(0.98);
+}
+
+/* Pulse animasyonu */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  }
+  100% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Hide/Show animasyonları */
+.hide-on-start {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.show-after-start {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Mapbox kontrolleri için stil düzenlemeleri */
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right {
+  display: none;
+}
+
+.mapboxgl-ctrl-top-right {
+  top: 20px;
+  right: 20px;
+}
+
+.mapboxgl-ctrl-top-left {
+  top: 20px;
+  left: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .start-button {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .start-button {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+}
+
+/* Loading state (isteğe bağlı) */
+.map-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.map-loading::before {
+  content: "🌍";
+  font-size: 48px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
