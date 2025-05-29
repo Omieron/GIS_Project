@@ -25,10 +25,27 @@ const StartButton: React.FC<StartButtonProps> = ({
     return null;
   }
 
+  // Default focus davranışını engellemek için kullanılacaktır 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault(); 
+    if (!disabled) {
+      onClick();
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!disabled) {
+      onClick();
+    }
+  };
+
+
   return (
     <button
       className={`start-button ${className}`.trim()}
-      onClick={onClick}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
       disabled={disabled}
       type="button"
     >
