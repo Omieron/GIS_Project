@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { rotateGlobe, flyToLocation } from './mapAnimation.ts';
+import { rotateGlobe, flyToLocation } from './mapAnimation';
 import '../styles/MapInitializer.css';
 
 // Mapbox access token
@@ -15,6 +15,9 @@ const MapInitializer: React.FC = () => {
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
+
+    // Container'ı tamamen temizle
+    mapContainerRef.current.innerHTML = '';
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -49,11 +52,11 @@ const MapInitializer: React.FC = () => {
   };
 
   return (
-    <div className="map-container">
+    <div className="map-wrapper">
       <div 
         ref={mapContainerRef} 
         id="map" 
-        style={{ width: '100%', height: '100%' }} 
+        className="map-container"
       />
       
       {showButton && mapLoaded && (
