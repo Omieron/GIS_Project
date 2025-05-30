@@ -6,6 +6,7 @@ import { Buildings3D } from './3DBuildings';
 import LayersButton from './LayersButton';
 import StartButton from '../ui/StartButton';
 import SettingsPanel from '../ui/SettingsPanel';
+import ChatBot from '../chat/ChatBot';
 import '../../styles/MapInitializer.css';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -19,6 +20,7 @@ const MapInitializer: React.FC = () => {
   const [currentMapStyle, setCurrentMapStyle] = useState<string>('streets');
   const [is3DBuildingsEnabled, setIs3DBuildingsEnabled] = useState<boolean>(true);
   const [activeLayers, setActiveLayers] = useState<string[]>([]);
+  const [isChatMinimized, setIsChatMinimized] = useState<boolean>(true);
 
   // Style mapping
   const getMapboxStyle = (styleId: string): string => {
@@ -80,6 +82,8 @@ const MapInitializer: React.FC = () => {
     if (mapRef.current) {
       flyToLocation(mapRef.current);
       setShowButton(false);
+      // ChatBot'u otomatik olarak aç
+      setIsChatMinimized(false);
     }
   };
 
@@ -139,6 +143,69 @@ const MapInitializer: React.FC = () => {
     }
   };
 
+  // ChatBot event handlers
+  const handleLocationRequest = (lat: number, lng: number, address?: string): void => {
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [lng, lat],
+        zoom: 16,
+        pitch: 45,
+        bearing: 0,
+        speed: 0.8,
+        curve: 1.2,
+        essential: true
+      });
+
+      // Add a marker for the location
+      new mapboxgl.Marker({ color: '#ef4444' })
+        .setLngLat([lng, lat])
+        .setPopup(new mapboxgl.Popup().setHTML(`
+          <div style="padding: 8px;">
+            <strong>📍 Konum</strong><br>
+            ${address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`}
+          </div>
+        `))
+        .addTo(mapRef.current);
+    }
+  };
+
+  const handleMapAction = (action: string, data?: any): void => {
+    console.log('Map action triggered:', action, data);
+    
+    switch (action) {
+      case 'showRestaurants':
+        // Restoran katmanını aktif et
+        handleLayerToggle('restaurants', true);
+        break;
+      case 'showHospitals':
+        // Hastane katmanını aktif et
+        handleLayerToggle('hospitals', true);
+        break;
+      case 'showTraffic':
+        // Trafik katmanını aktif et
+        handleLayerToggle('traffic', true);
+        break;
+      case 'showTransport':
+        // Ulaşım katmanını aktif et
+        handleLayerToggle('transport', true);
+        break;
+      case 'showShopping':
+        // Alışveriş katmanını aktif et
+        handleLayerToggle('shopping', true);
+        break;
+      case 'showParks':
+        // Park katmanını aktif et
+        handleLayerToggle('parks', true);
+        break;
+      default:
+        console.log('Unknown action:', action);
+    }
+  };
+
+  const handleChatToggle = (): void => {
+    setIsChatMinimized(!isChatMinimized);
+  };
+
   return (
     <div className="map-wrapper">
       <div 
@@ -162,6 +229,10 @@ const MapInitializer: React.FC = () => {
         onDarkModeToggle={handleDarkModeToggle}
         is3DBuildingsEnabled={is3DBuildingsEnabled}
         on3DBuildingsToggle={handle3DBuildingsToggle}
+        isVisible={mapLoaded}
+      />
+
+      <ChatBot
         isVisible={mapLoaded}
       />
     </div>
