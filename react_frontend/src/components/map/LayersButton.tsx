@@ -117,6 +117,7 @@ const LayersButton: React.FC<LayersButtonProps> = ({
       >
         <div className="layers-button-content">
           <span className="layers-icon">🗂️</span>
+          <span className="layers-text">Katmanlar</span>
           {activeLayersCount > 0 && (
             <span className="layers-badge">{activeLayersCount}</span>
           )}
